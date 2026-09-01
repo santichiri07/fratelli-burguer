@@ -1,0 +1,378 @@
+/*!*************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[13].oneOf[12].use[3]!./app/globals.css ***!
+  \*************************************************************************************************************************************************************************************************************************************************************/
+/* ============================================
+   PALETA DE COLORES (tokens de diseño)
+   Tema: "parrilla / brasa" — oscuro, cálido, con
+   acentos de fuego y de queso fundido.
+   ============================================ */
+:root {
+  --bg: #1c1410;          /* fondo general: madera quemada */
+  --bg-card: #2a1f18;     /* fondo de tarjetas */
+  --bg-card-hover: #35281f;
+  --flame: #e8543a;       /* acento principal: brasa/fuego */
+  --cheese: #f2b705;      /* acento secundario: queso fundido */
+  --text: #f5efe6;        /* texto principal, blanco cálido */
+  --muted: #a89684;       /* texto secundario */
+  --ticket: #efe6d8;      /* papel de comanda de cocina */
+  --ticket-text: #2a1f18;
+  --border: #3d2e22;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+h1,
+h2,
+h3,
+.display {
+  font-family: "Anton", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero {
+  padding: 64px 24px 48px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 0%, #3a2418 0%, var(--bg) 65%);
+  border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+  font-size: clamp(40px, 9vw, 84px);
+  line-height: 0.95;
+  margin: 0;
+  color: var(--text);
+}
+
+.hero h1 span {
+  color: var(--flame);
+}
+
+.hero p {
+  color: var(--muted);
+  font-size: 18px;
+  max-width: 480px;
+  margin: 16px auto 0;
+}
+
+.hero .badge {
+  display: inline-block;
+  background: var(--cheese);
+  color: var(--ticket-text);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+/* ============================================
+   MENÚ
+   ============================================ */
+.menu {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 20px 120px;
+}
+
+.menu-title {
+  font-size: 28px;
+  margin-bottom: 24px;
+  color: var(--cheese);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 20px;
+  gap: 20px;
+}
+
+.item-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.item-card:hover {
+  background: var(--bg-card-hover);
+}
+
+.item-card h3 {
+  font-size: 20px;
+  margin: 0;
+  color: var(--text);
+}
+
+.item-card .desc {
+  color: var(--muted);
+  font-size: 14px;
+  margin: -8px 0 0;
+  line-height: 1.4;
+}
+
+.variant-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.variant-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.variant-option input {
+  accent-color: var(--flame);
+}
+
+.variant-option.selected {
+  border-color: var(--flame);
+  background: rgba(232, 84, 58, 0.08);
+}
+
+.variant-option .price {
+  color: var(--cheese);
+  font-weight: 700;
+}
+
+.add-btn {
+  margin-top: 4px;
+  background: var(--flame);
+  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  padding: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: filter 0.15s ease;
+}
+
+.add-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* ============================================
+   BOTÓN FLOTANTE DEL CARRITO
+   ============================================ */
+.cart-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--cheese);
+  color: var(--ticket-text);
+  border: none;
+  border-radius: 999px;
+  padding: 16px 22px;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 40;
+}
+
+.cart-fab .count {
+  background: var(--ticket-text);
+  color: var(--cheese);
+  border-radius: 999px;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* ============================================
+   CARRITO — estilo "comanda de cocina"
+   (elemento de firma del diseño)
+   ============================================ */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 50;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cart-panel {
+  width: min(380px, 100%);
+  height: 100%;
+  background: var(--ticket);
+  color: var(--ticket-text);
+  overflow-y: auto;
+  padding: 0;
+  font-family: "Courier New", Courier, monospace;
+  position: relative;
+}
+
+.cart-panel::before {
+  content: "";
+  display: block;
+  height: 14px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--bg) 0 10px,
+    transparent 10px 20px
+  );
+}
+
+.ticket-header {
+  text-align: center;
+  padding: 20px 20px 12px;
+  border-bottom: 2px dashed var(--ticket-text);
+}
+
+.ticket-header h2 {
+  font-family: "Anton", sans-serif;
+  font-size: 22px;
+  margin: 0 0 4px;
+}
+
+.ticket-header p {
+  margin: 0;
+  font-size: 12px;
+  color: #6b5a48;
+}
+
+.ticket-close {
+  position: absolute;
+  top: 22px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--ticket-text);
+}
+
+.ticket-items {
+  padding: 16px 20px;
+  border-bottom: 2px dashed var(--ticket-text);
+}
+
+.ticket-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  padding: 8px 0;
+  border-bottom: 1px dotted #cbbfa9;
+}
+
+.ticket-line:last-child {
+  border-bottom: none;
+}
+
+.ticket-line .qty-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.ticket-line .qty-controls button {
+  background: var(--ticket-text);
+  color: var(--ticket);
+  border: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ticket-line .remove {
+  color: var(--flame);
+  background: none;
+  border: none;
+  font-size: 12px;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.ticket-empty {
+  padding: 40px 20px;
+  text-align: center;
+  color: #6b5a48;
+  font-size: 13px;
+}
+
+.ticket-total {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.ticket-footer {
+  padding: 16px 20px 28px;
+}
+
+.whatsapp-btn {
+  width: 100%;
+  background: #25d366;
+  color: #0b2e1a;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.whatsapp-btn:disabled {
+  opacity: 0.5;
+}
+
+.ticket-note {
+  font-size: 11px;
+  color: #6b5a48;
+  margin-top: 10px;
+  text-align: center;
+}
+
