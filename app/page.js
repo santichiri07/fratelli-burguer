@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { supabase } from "../lib/supabaseClient";
 import Image from "next/image"
 /* =========================================================
    1) ACÁ EDITO EL MENÚ
@@ -22,13 +23,15 @@ const CATEGORIES = [
     desc: "Tu hamburguesa favorita con papas y bebida, todo junto y más conveniente.",
     image: "/cat-combos.jpg",
   },
-  {
+   /* bebidas desactivadas temporalmente!
+   {
     id: "bebidas",
     label: "🥤 Bebidas",
     title: "BEBIDAS",
     desc: "Cervezas, gaseosas línea Pepsi y agua bien fría.",
     image: "/cat-bebidas.jpg",
   },
+    */
   {
     id: "extras",
     label: "➕ Extras",
@@ -41,6 +44,8 @@ const CATEGORIES = [
 const REMOVALS = [
   { id: "sin-lechuga", label: "Sin lechuga" },
   { id: "sin-tomate", label: "Sin tomate" },
+  { id: "sin-cheddar", label: "Sin cheddar" },
+  { id: "sin-cebolla", label: "Sin cebolla" },
 ];
 
 const EXTRAS = [
@@ -273,34 +278,48 @@ export default function Home() {
 
   const currentCategory = CATEGORIES.find((c) => c.id === viewingCategory);
 
-  function checkoutOnWhatsApp() {
-    if (cart.length === 0) return;
+async function checkoutOnWhatsApp() {
+  if (cart.length === 0) return;
+  const orderCode = String(Math.floor(1000 + Math.random() * 9000));
+  const lines = cart.map((line) => {
+    const notesPart = line.notes ? ` [${line.notes}]` : "";
+    return `• ${line.qty}x ${line.name} (${line.variantLabel})${notesPart} - ${formatPrice(line.price * line.qty)}`;
+  });
 
-    const lines = cart.map((line) => {
-      const notesPart = line.notes ? ` [${line.notes}]` : "";
-      return `• ${line.qty}x ${line.name} (${line.variantLabel})${notesPart} - ${formatPrice(line.price * line.qty)}`;
-    });
+  const modeLabel = orderMode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
 
-    const modeLabel = orderMode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
+  const message = [
+  `¡Hola! Quiero hacer el pedido #${orderCode}:`,
+  "",
+    `Modalidad: ${modeLabel}`,
+    "",
+    ...lines,
+    "",
+    `Total: ${formatPrice(total)}`,
+    "",
+    "Nombre:",
+    orderMode === "delivery" ? "Dirección:" : null,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
-    const message = [
-      "¡Hola! Quiero hacer este pedido:",
-      "",
-      `Modalidad: ${modeLabel}`,
-      "",
-      ...lines,
-      "",
-      `Total: ${formatPrice(total)}`,
-      "",
-      "Nombre:",
-      orderMode === "delivery" ? "Dirección:" : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    window.location.href = url;
+  /* Guardamos el pedido en Supabase. Si falla, igual dejamos
+     que el cliente pueda mandar el WhatsApp (no lo bloqueamos). */
+  try {
+   await supabase.from("orders").insert({
+  mode: orderMode,
+  items: cart,
+  total: total,
+  code: orderCode,
+});
+  } catch (err) {
+    console.error("No se pudo guardar el pedido en la base:", err);
   }
+
+  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  window.location.href = url;
+}
+  
 
   const cartWidget = (
     <>
