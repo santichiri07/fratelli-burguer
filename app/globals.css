@@ -118,6 +118,12 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.category-card:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
 }
 
 .category-card::before {
@@ -277,9 +283,13 @@ a {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  transition: background 0.15s ease, transform 0.15s ease;
+  transition: background 0.15s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.item-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+}
 .item-card:hover {
   background: var(--bg-card-hover);
 }
@@ -340,7 +350,15 @@ a {
   font-size: 14px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
-  transition: filter 0.15s ease;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.add-btn:hover {
+  filter: brightness(1.1);
+}
+
+.add-btn:active {
+  transform: scale(0.96);
 }
 
 .add-btn:hover {
@@ -777,3 +795,26 @@ a {
 .panel-delete-btn:hover {
   filter: brightness(1.1);
 }
+/* ============================================
+   ANIMACIÓN DE ENTRADA
+   ============================================ */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-card,
+.item-card {
+  animation: fadeSlideUp 0.5s ease backwards;
+}
+
+.category-cards .category-card:nth-child(1) { animation-delay: 0.05s; }
+.category-cards .category-card:nth-child(2) { animation-delay: 0.1s; }
+.category-cards .category-card:nth-child(3) { animation-delay: 0.15s; }
+.category-cards .category-card:nth-child(4) { animation-delay: 0.2s; }
