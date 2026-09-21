@@ -316,8 +316,9 @@ async function checkoutOnWhatsApp() {
     console.error("No se pudo guardar el pedido en la base:", err);
   }
 
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  window.location.href = url;
+const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+window.open(url, "_blank");
+window.location.href = `/pedido/${orderCode}`;
 }
   
 

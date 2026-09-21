@@ -818,3 +818,115 @@ a {
 .category-cards .category-card:nth-child(2) { animation-delay: 0.1s; }
 .category-cards .category-card:nth-child(3) { animation-delay: 0.15s; }
 .category-cards .category-card:nth-child(4) { animation-delay: 0.2s; }
+/* ============================================
+   SEGUIMIENTO DE PEDIDO (cliente)
+   ============================================ */
+.tracking-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  padding: 24px;
+}
+
+.tracking-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 24px;
+  width: min(420px, 100%);
+  text-align: center;
+}
+
+.tracking-title {
+  color: var(--cheese);
+  font-size: 26px;
+  margin: 0 0 24px;
+}
+
+.tracking-loading {
+  color: var(--muted);
+  padding: 20px 0;
+}
+
+.tracking-steps {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  margin: 24px 0;
+}
+
+.tracking-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 32px;
+  width: 100%;
+}
+
+.tracking-step:last-child {
+  padding-bottom: 0;
+}
+
+.tracking-dot {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  z-index: 1;
+}
+
+.tracking-dot.done {
+  background: #2ecc71;
+  border-color: #2ecc71;
+  color: #06301a;
+}
+
+.tracking-dot.current {
+  border-color: var(--flame);
+  animation: pulseDot 1.4s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(232, 84, 58, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(232, 84, 58, 0);
+  }
+}
+
+.tracking-label {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+}
+
+.tracking-line {
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  width: 2px;
+  height: 32px;
+  background: var(--border);
+}
+
+.tracking-line.done {
+  background: #2ecc71;
+}
+
+.tracking-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 20px;
+}
