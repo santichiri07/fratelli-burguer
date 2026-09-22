@@ -47,6 +47,7 @@ export default function SeguimientoPedido() {
   }, [code]);
 
   const currentStepIndex = order ? STEPS.findIndex((s) => s.id === order.status) : -1;
+  const currentStatusLabel = currentStepIndex >= 0 ? STEPS[currentStepIndex].label : "Recibido";
 
   function sendToWhatsApp() {
     if (!order) return;
@@ -102,11 +103,28 @@ export default function SeguimientoPedido() {
 
         {order && (
           <>
-            <button className="tracking-whatsapp-btn" onClick={sendToWhatsApp}>
-              💬 Enviar pedido por WhatsApp
-            </button>
+           <button className="tracking-whatsapp-btn" onClick={sendToWhatsApp}>
+  💬 Enviar pedido por WhatsApp
+</button>
 
-            <div className="tracking-steps">
+<div className="terminal-loader" key={currentStatusLabel}>
+  <div className="terminal-header">
+    <div className="terminal-title">Estado</div>
+    <div className="terminal-controls">
+      <div className="control close"></div>
+      <div className="control minimize"></div>
+      <div className="control maximize"></div>
+    </div>
+  </div>
+  <div
+    className="text"
+    style={{ "--term-width": `${currentStatusLabel.length * 0.62}em` }}
+  >
+    {currentStatusLabel}
+  </div>
+</div>
+
+<div className="tracking-steps">
               {STEPS.map((step, idx) => {
                 const isDone = idx < currentStepIndex;
                 const isCurrent = idx === currentStepIndex;

@@ -954,9 +954,10 @@ a {
 
 @keyframes typeAndDelete {
   0%, 10% { width: 0; }
-  45%, 55% { width: 6.2em; }
+  45%, 55% { width: var(--term-width, 6.2em); }
   90%, 100% { width: 0; }
 }
+
 
 .terminal-loader {
   border: 0.1em solid var(--border);
