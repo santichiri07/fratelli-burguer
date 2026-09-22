@@ -82,7 +82,19 @@ export default function SeguimientoPedido() {
       <div className="tracking-card">
         <h1 className="tracking-title">Pedido #{code}</h1>
 
-        {loading && <p className="tracking-loading">Buscando tu pedido...</p>}
+        {loading && (
+  <div className="terminal-loader">
+    <div className="terminal-header">
+      <div className="terminal-title">Buscando pedido</div>
+      <div className="terminal-controls">
+        <div className="control close"></div>
+        <div className="control minimize"></div>
+        <div className="control maximize"></div>
+      </div>
+    </div>
+    <div className="text">Cargando...</div>
+  </div>
+)}
 
         {!loading && !order && (
           <p className="tracking-loading">No encontramos ese pedido.</p>
