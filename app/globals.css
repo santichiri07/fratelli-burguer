@@ -930,3 +930,19 @@ a {
   font-size: 12px;
   margin-top: 20px;
 }
+.tracking-whatsapp-btn {
+  width: 100%;
+  background: #25d366;
+  color: #06301a;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 14px;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.tracking-whatsapp-btn:hover {
+  filter: brightness(1.05);
+}

@@ -4,12 +4,23 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
 
+/* Mismo número que en app/page.js. Si lo cambiás ahí, cambialo acá también. */
+const WHATSAPP_NUMBER = "5492216166846";
+
 const STEPS = [
   { id: "nuevo", label: "Recibido", emoji: "🆕" },
   { id: "preparacion", label: "En preparación", emoji: "🍳" },
   { id: "listo", label: "Listo", emoji: "✅" },
   { id: "entregado", label: "Entregado", emoji: "📦" },
 ];
+
+function formatPrice(n) {
+  return Number(n).toLocaleString("es-AR", {
+    style: "currency",
+    currency: "ARS",
+    maximumFractionDigits: 0,
+  });
+}
 
 export default function SeguimientoPedido() {
   const params = useParams();
@@ -37,6 +48,35 @@ export default function SeguimientoPedido() {
 
   const currentStepIndex = order ? STEPS.findIndex((s) => s.id === order.status) : -1;
 
+  function sendToWhatsApp() {
+    if (!order) return;
+
+    const lines = (order.items || []).map((line) => {
+      const notesPart = line.notes ? ` [${line.notes}]` : "";
+      return `• ${line.qty}x ${line.name} (${line.variantLabel})${notesPart} - ${formatPrice(line.price * line.qty)}`;
+    });
+
+    const modeLabel = order.mode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
+
+    const message = [
+      `¡Hola! Quiero hacer el pedido #${order.code}:`,
+      "",
+      `Modalidad: ${modeLabel}`,
+      "",
+      ...lines,
+      "",
+      `Total: ${formatPrice(order.total)}`,
+      "",
+      "Nombre:",
+      order.mode === "delivery" ? "Dirección:" : null,
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    window.location.href = url;
+  }
+
   return (
     <div className="tracking-page">
       <div className="tracking-card">
@@ -50,6 +90,10 @@ export default function SeguimientoPedido() {
 
         {order && (
           <>
+            <button className="tracking-whatsapp-btn" onClick={sendToWhatsApp}>
+              💬 Enviar pedido por WhatsApp
+            </button>
+
             <div className="tracking-steps">
               {STEPS.map((step, idx) => {
                 const isDone = idx < currentStepIndex;
