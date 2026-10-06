@@ -65,6 +65,10 @@ const MENU = [
     ingredients: [
     { id: "cheddar", label: "Cheddar" },
     ],
+  extras: [
+    { nombre: "Cheddar", precio: 500 },
+    { nombre: "medallon de carne", precio: 800 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 7000 },
       { id: "doble", label: "Doble", price: 9000 },
@@ -79,6 +83,10 @@ const MENU = [
     ingredients: [
     { id: "bacon", label: "Bacon" },
     ],
+    extras: [
+    { nombre: "Bacon", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 10000 },
       { id: "doble", label: "Doble", price: 12000 },
@@ -98,6 +106,15 @@ const MENU = [
     { id: "aros-cebolla", label: "Aros de cebolla" },
     { id: "salsa", label: "Salsa" },
     ],
+    extras: [
+    { nombre: "lechuga", precio: 800 },
+    { nombre: "Cheddar", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+    { nombre: "tomate", precio: 500 },
+    { nombre: "pepinillos", precio: 800 },
+    { nombre: "aros de cebolla", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -113,6 +130,11 @@ const MENU = [
     { id: "cebolla", label: "Cebolla laminada" },
     { id: "cheddar", label: "Cheddar" },
     ],
+    extras: [
+    { nombre: "cebolla laminada", precio: 800 },
+    { nombre: "Cheddar", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -130,6 +152,11 @@ const MENU = [
     { id: "pepinillos", label: "Pepinillos" },
     { id: "salsa", label: "Salsa" },
     ],
+    extras: [
+    { nombre: "Cheddar", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+    { nombre: "cebolla grillada", precio: 500 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -146,6 +173,11 @@ const MENU = [
     { id: "salsa", label: "Salsa" },
     { id: "pepinillos", label: "Pepinillos" },
     ],
+    extras: [
+    { nombre: "Cheddar", precio: 500 },
+    { nombre: "Medallon de carne", precio: 800 },
+    { nombre: "pepinillos", precio: 800 },
+  ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 10000 },
