@@ -61,29 +61,91 @@ const MENU = [
     category: "hamburguesas",
     customizable: true,
     name: "Burger Cheese",
-    desc: "Nuestra clásica, con doble cheddar fundido.",
+    desc: "Pan de papa, Medallon de Carne, Cheddar. Acompañada con papas fritas",
+    ingredients: [
+    { id: "cheddar", label: "Cheddar" },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 7000 },
       { id: "doble", label: "Doble", price: 9000 },
     ],
   },
   {
-    id: "completa",
+    id: "bacon cheese",
     category: "hamburguesas",
     customizable: true,
-    name: "Burguer Completa",
-    desc: "Lechuga, tomate, jamón y queso.",
+    name: "Bacon Cheese burguer",
+    desc: "Pan de papa, Medallon de Carne y Bacon. Acompañada con papas fritas",
+    ingredients: [
+    { id: "bacon", label: "Bacon" },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 10000 },
       { id: "doble", label: "Doble", price: 12000 },
     ],
   },
   {
-    id: "veggie",
+    id: "AMERICANA",
     category: "hamburguesas",
     customizable: true,
-    name: "Burguer Veggie",
-    desc: "Opción sin carne, mismo sabor de siempre.",
+    name: "american",
+    desc: "Pan de papa, Medallon de carne,cheddar, Lechuga, Tomate, Pepinillos, Aros de cebolla y salsa. Acompañada con papas fritas",
+   ingredients: [
+    { id: "lechuga", label: "Lechuga" },
+    { id: "tomate", label: "Tomate" },
+    { id: "pepinillos", label: "Pepinillos" },
+    { id: "cheddar", label: "Cheddar" },
+    { id: "aros-cebolla", label: "Aros de cebolla" },
+    { id: "salsa", label: "Salsa" },
+    ],
+    variants: [
+      { id: "simple", label: "Simple", price: 8000 },
+      { id: "doble", label: "Doble", price: 10000 },
+    ],
+  },
+  {
+    id: "OKLAHOMA",
+    category: "hamburguesas",
+    customizable: true,
+    name: "OKLAHOMA burger",
+    desc: "Pan de papa, Medallon de carne, Cebolla laminada y Cheedar. Acompañada con papas fritas",
+    ingredients: [
+    { id: "cebolla", label: "Cebolla laminada" },
+    { id: "cheddar", label: "Cheddar" },
+    ],
+    variants: [
+      { id: "simple", label: "Simple", price: 8000 },
+      { id: "doble", label: "Doble", price: 10000 },
+    ],
+  },
+   {
+    id: "Estilo americano",
+    category: "hamburguesas",
+    customizable: true,
+    name: "estilo americano",
+    desc: "Pan de papa, Medallon de carne, Cheddar, Ceboolla grillada, Pepinillo y Salsa. Acompañada con papas fritas",
+    ingredients: [
+    { id: "cheddar", label: "Cheddar" },
+    { id: "cebolla", label: "Cebolla" },
+    { id: "pepinillos", label: "Pepinillos" },
+    { id: "salsa", label: "Salsa" },
+    ],
+    variants: [
+      { id: "simple", label: "Simple", price: 8000 },
+      { id: "doble", label: "Doble", price: 10000 },
+    ],
+  },
+  {
+    id: "La Clásica ¼",
+    category: "hamburguesas",
+    customizable: true,
+    name: "La Clásica ¼",
+    desc: "Pan de papa, Medallon de carne, Cheddar, Pepinillo, Salsa de ketchup y mostaza. Acompañada con papas fritas",
+    ingredients: [
+    { id: "cheddar", label: "Cheddar" },
+    { id: "salsa", label: "Salsa" },
+    { id: "pepinillos", label: "Pepinillos" },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -94,6 +156,7 @@ const MENU = [
     name: "Sobre de Papas",
     category: "extras",
     desc: "Porción individual.",
+    
     variants: [
       { id: "sazonadas", label: "Sazonadas", price: 2000 },
       { id: "sin-sazonar", label: "Sin sazonar", price: 2000 },
@@ -213,9 +276,9 @@ export default function Home() {
       const custom = getItemCustomization(item.id);
 
       custom.removals.forEach((rId) => {
-        const removal = REMOVALS.find((r) => r.id === rId);
-        if (removal) notesParts.push(removal.label);
-      });
+  const removal = (item.ingredients || []).find((r) => r.id === rId);
+  if (removal) notesParts.push(`Sin ${removal.label}`);
+});
 
       custom.extras.forEach((eId) => {
         const extra = EXTRAS.find((e) => e.id === eId);
@@ -498,22 +561,26 @@ window.location.href = `/pedido/${orderCode}`;
 
                 {item.customizable && (
                   <div className="customize-box">
-                    <p className="customize-label">Sacar ingredientes</p>
-                    <div className="chip-row">
-                      {REMOVALS.map((r) => (
-                        <label
-                          key={r.id}
-                          className={`chip ${getItemCustomization(item.id).removals.includes(r.id) ? "active" : ""}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={getItemCustomization(item.id).removals.includes(r.id)}
-                            onChange={() => toggleRemoval(item.id, r.id)}
-                          />
-                          {r.label}
-                        </label>
-                      ))}
-                    </div>
+                    {item.ingredients && item.ingredients.length > 0 && (
+  <>
+    <p className="customize-label">Sacar ingredientes</p>
+    <div className="chip-row">
+      {item.ingredients.map((r) => (
+        <label
+          key={r.id}
+          className={`chip ${getItemCustomization(item.id).removals.includes(r.id) ? "active" : ""}`}
+        >
+          <input
+            type="checkbox"
+            checked={getItemCustomization(item.id).removals.includes(r.id)}
+            onChange={() => toggleRemoval(item.id, r.id)}
+          />
+          Sin {r.label}
+        </label>
+      ))}
+    </div>
+  </>
+)}
 
                     <p className="customize-label">Extras</p>
                     <div className="chip-row">
