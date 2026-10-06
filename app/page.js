@@ -41,19 +41,6 @@ const CATEGORIES = [
   },
 ];
 
-const REMOVALS = [
-  { id: "sin-lechuga", label: "Sin lechuga" },
-  { id: "sin-tomate", label: "Sin tomate" },
-  { id: "sin-cheddar", label: "Sin cheddar" },
-  { id: "sin-cebolla", label: "Sin cebolla" },
-];
-
-const EXTRAS = [
-  { id: "extra-cheddar", label: "Extra cheddar", price: 1000 },
-  { id: "extra-bacon", label: "Extra bacon", price: 1500 },
-  { id: "extra-carne", label: "Extra carne", price: 2500 },
-  { id: "salsa-extra", label: "Salsa adicional", price: 500 },
-];
 
 const MENU = [
   {
