@@ -46,6 +46,14 @@ export default function SeguimientoPedido() {
     return () => clearInterval(interval);
   }, [code]);
 
+  // Si el pedido ya fue entregado, redirigir a home y limpiar localStorage
+  useEffect(() => {
+    if (order && order.status === "entregado") {
+      localStorage.removeItem("fb_last_order_code");
+      window.location.href = "/";
+    }
+  }, [order]);
+
   const currentStepIndex = order ? STEPS.findIndex((s) => s.id === order.status) : -1;
   const currentStatusLabel = currentStepIndex >= 0 ? STEPS[currentStepIndex].label : "Recibido";
 
@@ -59,7 +67,7 @@ export default function SeguimientoPedido() {
 
     const modeLabel = order.mode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
 
-    const message = [
+    const messageParts = [
       `¡Hola! Quiero hacer el pedido #${order.code}:`,
       "",
       `Modalidad: ${modeLabel}`,
@@ -69,10 +77,16 @@ export default function SeguimientoPedido() {
       `Total: ${formatPrice(order.total)}`,
       "",
       "Nombre:",
-      order.mode === "delivery" ? "Dirección:" : null,
-    ]
-      .filter(Boolean)
-      .join("\n");
+    ];
+
+    if (order.mode === "delivery" && order.delivery_address) {
+      messageParts.push("Dirección:", order.delivery_address);
+      if (order.delivery_lat !== null && order.delivery_lng !== null) {
+        messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`);
+      }
+    }
+
+    const message = messageParts.filter(Boolean).join("\n");
 
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     window.location.href = url;
@@ -101,13 +115,34 @@ export default function SeguimientoPedido() {
           <p className="tracking-loading">No encontramos ese pedido.</p>
         )}
 
-        {order && (
+{order && (
           <>
            <button className="tracking-whatsapp-btn" onClick={sendToWhatsApp}>
-  💬 Enviar pedido por WhatsApp
-</button>
+             💬 Enviar pedido por WhatsApp
+           </button>
 
-<div className="terminal-loader" key={currentStatusLabel}>
+          <div className="tracking-payment-note">
+            <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acosta</strong>
+          </div>
+
+          {order.mode === "delivery" && order.delivery_address && (
+            <div className="tracking-delivery-info">
+              <h3>📍 Dirección de entrega</h3>
+              <p className="delivery-address">{order.delivery_address}</p>
+              {order.delivery_lat !== null && order.delivery_lng !== null && (
+                <a
+                  className="delivery-map-link"
+                  href={`https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  🗺️ Ver en Google Maps
+                </a>
+              )}
+            </div>
+          )}
+
+ <div className="terminal-loader" key={currentStatusLabel}>
   <div className="terminal-header">
     <div className="terminal-title">Estado</div>
     <div className="terminal-controls">

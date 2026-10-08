@@ -199,7 +199,26 @@ export default function Panel() {
                 <div className="panel-order-top">
                   <span className="panel-order-code">Pedido #{order.code}</span>
                   <span className="panel-order-date">{formatDate(order.created_at)}</span>
+                  <span className={`panel-order-mode ${order.mode}`}>
+                    {order.mode === "delivery" ? "🛵 Delivery" : "🏠 Take Away"}
+                  </span>
                 </div>
+
+                {order.mode === "delivery" && order.delivery_address && (
+                  <div className="panel-delivery-info">
+                    <p className="panel-delivery-address">{order.delivery_address}</p>
+                    {order.delivery_lat !== null && order.delivery_lng !== null && (
+                      <a
+                        className="panel-map-btn"
+                        href={`https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        🗺️ Ver en mapa
+                      </a>
+                    )}
+                  </div>
+                )}
 
                 <ul className="panel-order-items">
                   {(order.items || []).map((line, idx) => (
@@ -240,6 +259,22 @@ export default function Panel() {
                     {order.mode === "delivery" ? "🛵 Delivery" : "🏠 Take Away"}
                   </span>
                 </div>
+
+                {order.mode === "delivery" && order.delivery_address && (
+                  <div className="panel-delivery-info">
+                    <p className="panel-delivery-address">{order.delivery_address}</p>
+                    {order.delivery_lat !== null && order.delivery_lng !== null && (
+                      <a
+                        className="panel-map-btn"
+                        href={`https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        🗺️ Ver en mapa
+                      </a>
+                    )}
+                  </div>
+                )}
 
                 <ul className="panel-order-items">
                   {(order.items || []).map((line, idx) => (

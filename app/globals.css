@@ -245,7 +245,28 @@ a {
   padding: 6px 14px;
   border-radius: 999px;
   margin-bottom: 20px;
-  
+}
+
+.last-order-link {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 14px;
+  text-decoration: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.last-order-link:hover {
+  border-color: var(--flame);
+  background: var(--bg-card-hover);
+}
+
+.last-order-link strong {
+  color: var(--cheese);
 }
 
 /* ============================================
@@ -548,6 +569,48 @@ a {
   margin-top: 10px;
   text-align: center;
 }
+
+.ticket-footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.ticket-footer-row .whatsapp-btn {
+  flex: 1;
+  min-width: 200px;
+  width: auto;
+}
+
+.payment-note {
+  flex: 1;
+  min-width: 220px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.payment-note strong {
+  color: var(--cheese);
+}
+
+@media (max-width: 480px) {
+  .ticket-footer-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .ticket-footer-row .whatsapp-btn,
+  .payment-note {
+    width: 100%;
+    min-width: 0;
+  }
+}
 .logo-img {
   border-radius: 50%;
   object-fit: cover;
@@ -619,7 +682,7 @@ a {
 }
 
 .panel-login-box input {
-  background: var(--bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   color: var(--text);
   padding: 10px 14px;
@@ -1023,4 +1086,336 @@ a {
     typeAndDelete 4s steps(11) infinite,
     blinkCursor 0.5s step-end infinite alternate;
   margin-top: 1.5em;
+}
+
+/* ============================================
+   MAPA DE ENTREGA (Delivery)
+   ============================================ */
+.delivery-section {
+  padding: 24px 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.delivery-section-inner {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.delivery-title {
+  font-family: "Anton", sans-serif;
+  font-size: 22px;
+  color: var(--cheese);
+  margin: 0 0 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.delivery-field {
+  margin-bottom: 20px;
+}
+
+.delivery-field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.required {
+  color: var(--flame);
+  margin-left: 4px;
+}
+
+.delivery-input {
+  width: 100%;
+  background: var(--bg-card);
+  border: 2px solid var(--border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.delivery-input:focus {
+  outline: none;
+  border-color: var(--flame);
+}
+
+.delivery-input::placeholder {
+  color: var(--muted);
+}
+
+.delivery-error {
+  color: #e74c3c;
+  font-size: 13px;
+  margin: 8px 0 0;
+  font-weight: 500;
+}
+
+.delivery-map-container {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: transparent;
+}
+
+.delivery-map-container-inner {
+  position: relative;
+  height: 350px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.delivery-map {
+  height: 100%;
+  width: 100%;
+  transition: opacity 0.3s ease;
+}
+
+.delivery-map-loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 8, 8, 0.85);
+  color: var(--muted);
+  gap: 12px;
+  z-index: 10;
+}
+
+.map-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--flame);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.delivery-map-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 0 4px;
+}
+
+.btn-location {
+  background: var(--flame);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.btn-location:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.btn-location:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-location:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.map-coords {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: monospace;
+  background: var(--bg-card);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.map-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  margin: 12px 0 0;
+  line-height: 1.5;
+}
+
+.store-marker-icon {
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.delivery-pin-div {
+  filter: drop-shadow(0 2px 8px rgba(218, 196, 7, 0.6));
+}
+
+.pin-emoji {
+  font-size: 36px;
+  line-height: 1;
+  animation: pinPulse 2s ease-in-out infinite;
+  display: block;
+  text-align: center;
+}
+
+@keyframes pinPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ============================================
+   SEGUIMIENTO DE PEDIDO - Info de delivery
+   ============================================ */
+.tracking-delivery-info {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.tracking-delivery-info h3 {
+  font-family: "Anton", sans-serif;
+  color: var(--cheese);
+  font-size: 18px;
+  margin: 0 0 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.delivery-address {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 12px;
+  white-space: pre-wrap;
+}
+
+.delivery-map-link {
+  display: inline-block;
+  background: var(--flame);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.delivery-map-link:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.tracking-payment-note {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.tracking-payment-note strong {
+  color: var(--cheese);
+}
+
+/* ============================================
+   PANEL DE ADMIN - Info de delivery
+   ============================================ */
+.panel-delivery-info {
+  background: rgba(218, 196, 7, 0.08);
+  border: 1px solid var(--flame);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin: 12px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.panel-delivery-address {
+  flex: 1;
+  min-width: 200px;
+  font-size: 14px;
+  color: var(--text);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.panel-map-btn {
+  background: var(--flame);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+
+.panel-map-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 480px) {
+  .delivery-section-inner {
+    padding: 16px;
+  }
+
+  .delivery-map {
+    height: 280px;
+  }
+
+  .delivery-map-loading {
+    height: 280px;
+  }
+
+  .delivery-map-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-location {
+    width: 100%;
+    text-align: center;
+  }
+
+  .map-coords {
+    text-align: center;
+  }
+
+  .panel-delivery-info {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .panel-map-btn {
+    text-align: center;
+  }
 }

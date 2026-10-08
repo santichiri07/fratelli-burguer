@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { supabase } from "../lib/supabaseClient";
-import Image from "next/image"
+import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const DeliveryMap = dynamic(() => import("../components/DeliveryMap"), { ssr: false });
 /* =========================================================
    1) ACÁ EDITO EL MENÚ
    Cada producto tiene "variants": las opciones con su precio.
@@ -41,7 +44,20 @@ const CATEGORIES = [
   },
 ];
 
-
+const REMOVALS = [
+  { id: "sin-lechuga", label: "Sin lechuga" },
+  { id: "sin-tomate", label: "Sin tomate" },
+  { id: "sin-cheddar", label: "Sin cheddar" },
+  { id: "sin-cebolla", label: "Sin cebolla" },
+];
+//
+const EXTRAS = [
+  { id: "extra-cheddar", label: "Extra cheddar", price: 1000 },
+  { id: "extra-bacon", label: "Extra bacon", price: 1500 },
+  { id: "extra-carne", label: "Extra carne", price: 2500 },
+  { id: "salsa-extra", label: "Salsa adicional", price: 500 },
+];
+ //
 const MENU = [
   {
     id: "cheese",
@@ -100,7 +116,6 @@ const MENU = [
     { nombre: "tomate", precio: 500 },
     { nombre: "pepinillos", precio: 800 },
     { nombre: "aros de cebolla", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
   ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
@@ -249,12 +264,40 @@ function formatPrice(n) {
 export default function Home() {
   const [orderMode, setOrderMode] = useState(null); // "takeaway" | "delivery" | null
   const [viewingCategory, setViewingCategory] = useState(null); // id de categoría o null (portada)
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("fb_cart");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [customization, setCustomization] = useState({});
   const [selectedVariant, setSelectedVariant] = useState(
     Object.fromEntries(MENU.map((item) => [item.id, item.variants[0].id]))
   );
+  const [deliveryStreet, setDeliveryStreet] = useState(""); // calle y número
+  const [deliveryDetails, setDeliveryDetails] = useState(""); // piso, depto, referencias
+  const [deliveryLat, setDeliveryLat] = useState(null);
+  const [deliveryLng, setDeliveryLng] = useState(null);
+  const [deliveryError, setDeliveryError] = useState("");
+  const [lastOrderCode, setLastOrderCode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("fb_last_order_code") || null;
+    }
+    return null;
+  });
+
+  // Persistir carrito en localStorage
+  useEffect(() => {
+    localStorage.setItem("fb_cart", JSON.stringify(cart));
+  }, [cart]);
 
   function goToCategory(categoryId) {
     setViewingCategory(categoryId);
@@ -299,15 +342,14 @@ export default function Home() {
   if (removal) notesParts.push(`Sin ${removal.label}`);
 });
 
-      custom.extras.forEach((eId) => {
-        const extra = EXTRAS.find((e) => e.id === eId);
+            custom.extras.forEach((eId) => {
+        const extra = (item.extras || [])[Number(eId)];
         if (extra) {
-          notesParts.push(extra.label);
-          extraPrice += extra.price;
+          notesParts.push(`Extra ${extra.nombre}`);
+          extraPrice += extra.precio;
         }
       });
-    }
-
+      }
     const notes = notesParts.join(", ");
     const cartLineId = `${item.id}-${variant.id}-${notes}`;
 
@@ -347,6 +389,27 @@ export default function Home() {
     setCart((prev) => prev.filter((line) => line.cartLineId !== cartLineId));
   }
 
+  function handleDeliveryStreetChange(e) {
+    setDeliveryStreet(e.target.value);
+    setDeliveryError("");
+  }
+
+  function handleDeliveryDetailsChange(e) {
+    setDeliveryDetails(e.target.value);
+    setDeliveryError("");
+  }
+
+  function handleMapPositionChange(pos) {
+    if (pos) {
+      setDeliveryLat(pos.lat);
+      setDeliveryLng(pos.lng);
+      setDeliveryError("");
+      // Template para que el usuario complete
+      setDeliveryStreet("Calle y número: ");
+      setDeliveryDetails("Piso/Depto/Referencias: ");
+    }
+  }
+
   const total = useMemo(
     () => cart.reduce((sum, line) => sum + line.price * line.qty, 0),
     [cart]
@@ -362,6 +425,19 @@ export default function Home() {
 
 async function checkoutOnWhatsApp() {
   if (cart.length === 0) return;
+
+  if (orderMode === "delivery") {
+    if (!deliveryStreet.trim()) {
+      setDeliveryError("Por favor, ingresá la calle y número.");
+      return;
+    }
+    if (deliveryLat === null || deliveryLng === null) {
+      setDeliveryError("Por favor, marcá la ubicación exacta en el mapa.");
+      return;
+    }
+  }
+  setDeliveryError("");
+
   const orderCode = String(Math.floor(1000 + Math.random() * 9000));
   const lines = cart.map((line) => {
     const notesPart = line.notes ? ` [${line.notes}]` : "";
@@ -370,9 +446,9 @@ async function checkoutOnWhatsApp() {
 
   const modeLabel = orderMode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
 
-  const message = [
-  `¡Hola! Quiero hacer el pedido #${orderCode}:`,
-  "",
+  const messageParts = [
+    `¡Hola! Quiero hacer el pedido #${orderCode}:`,
+    "",
     `Modalidad: ${modeLabel}`,
     "",
     ...lines,
@@ -380,25 +456,40 @@ async function checkoutOnWhatsApp() {
     `Total: ${formatPrice(total)}`,
     "",
     "Nombre:",
-    orderMode === "delivery" ? "Dirección:" : null,
-  ]
-    .filter(Boolean)
-    .join("\n");
+  ];
+
+  if (orderMode === "delivery") {
+    const fullAddress = `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`;
+    messageParts.push("Dirección:", fullAddress);
+    if (deliveryLat !== null && deliveryLng !== null) {
+      messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${deliveryLat},${deliveryLng}`);
+    }
+  }
+
+  const message = messageParts.filter(Boolean).join("\n");
 
   /* Guardamos el pedido en Supabase. Si falla, igual dejamos
      que el cliente pueda mandar el WhatsApp (no lo bloqueamos). */
   try {
-   await supabase.from("orders").insert({
-  mode: orderMode,
-  items: cart,
-  total: total,
-  code: orderCode,
-});
+    const fullAddress = orderMode === "delivery"
+      ? `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`
+      : null;
+    await supabase.from("orders").insert({
+      mode: orderMode,
+      items: cart,
+      total: total,
+      code: orderCode,
+      delivery_address: fullAddress,
+      delivery_lat: orderMode === "delivery" ? deliveryLat : null,
+      delivery_lng: orderMode === "delivery" ? deliveryLng : null,
+    });
+    // Guardar código del último pedido para acceso rápido
+    localStorage.setItem("fb_last_order_code", orderCode);
   } catch (err) {
     console.error("No se pudo guardar el pedido en la base:", err);
   }
 
-window.location.href = `/pedido/${orderCode}`;
+  window.location.href = `/pedido/${orderCode}`;
 }
   
 
@@ -449,11 +540,18 @@ window.location.href = `/pedido/${orderCode}`;
             </div>
 
             <div className="ticket-footer">
-              <button className="whatsapp-btn" onClick={checkoutOnWhatsApp} disabled={cart.length === 0}>
-                Enviar pedido por WhatsApp
-              </button>
+              <div className="ticket-footer-row">
+                <button className="whatsapp-btn" onClick={checkoutOnWhatsApp} disabled={cart.length === 0}>
+                  Enviar pedido por WhatsApp
+                </button>
+                <div className="payment-note">
+                  <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
+                </div>
+              </div>
               <p className="ticket-note">
-                Se abre WhatsApp con tu pedido ya armado. Completás nombre y dirección ahí.
+                {orderMode === "delivery"
+                  ? "Completá la dirección y ubicación arriba. Se abre WhatsApp con tu pedido ya armado."
+                  : "Se abre WhatsApp con tu pedido ya armado. Completás nombre ahí."}
               </p>
             </div>
           </div>
@@ -496,6 +594,12 @@ window.location.href = `/pedido/${orderCode}`;
             fratelli <span>burger</span>
           </h1>
           <p>Elegí tus favoritas, armá el pedido y coordinalo por WhatsApp en segundos.</p>
+
+          {lastOrderCode && (
+            <a className="last-order-link" href={`/pedido/${lastOrderCode}`}>
+              📦 Ver mi pedido en curso: <strong>#{lastOrderCode}</strong>
+            </a>
+          )}
         </header>
 
         <section className="menu-bg">
@@ -546,6 +650,54 @@ window.location.href = `/pedido/${orderCode}`;
         <h1>{currentCategory?.title}</h1>
         <p>{currentCategory?.desc}</p>
       </header>
+
+      {orderMode === "delivery" && (
+        <section className="menu-bg">
+          <div className="delivery-section">
+            <div className="delivery-section-inner">
+              <h2 className="delivery-title">📍 Datos de entrega</h2>
+
+              <div className="delivery-field">
+                <label htmlFor="delivery-street">Calle y número <span className="required">*</span></label>
+                <input
+                  type="text"
+                  id="delivery-street"
+                  className="delivery-input"
+                  placeholder="Ej: Diagonal 77 N° 809 e/ 11 y 12"
+                  value={deliveryStreet}
+                  onChange={handleDeliveryStreetChange}
+                  required
+                  autoComplete="street-address"
+                />
+              </div>
+
+              <div className="delivery-field">
+                <label htmlFor="delivery-details">Piso / Depto / Referencias (opcional)</label>
+                <input
+                  type="text"
+                  id="delivery-details"
+                  className="delivery-input"
+                  placeholder="Ej: 2° B, puerta negra, timbre rojo"
+                  value={deliveryDetails}
+                  onChange={handleDeliveryDetailsChange}
+                  autoComplete="address-level2"
+                />
+              </div>
+
+              {deliveryError && <p className="delivery-error">{deliveryError}</p>}
+
+              <div className="delivery-map-container">
+                <Suspense fallback={<div className="delivery-map-container-inner"><div className="delivery-map-loading"><div className="map-spinner" /><p>Cargando mapa...</p></div></div>}>
+                  <DeliveryMap
+                    initialPosition={deliveryLat && deliveryLng ? { lat: deliveryLat, lng: deliveryLng } : null}
+                    onPositionChange={handleMapPositionChange}
+                  />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="menu-bg">
         <main className="menu">
@@ -601,22 +753,27 @@ window.location.href = `/pedido/${orderCode}`;
   </>
 )}
 
-                    <p className="customize-label">Extras</p>
-                    <div className="chip-row">
-                      {EXTRAS.map((ex) => (
-                        <label
-                          key={ex.id}
-                          className={`chip ${getItemCustomization(item.id).extras.includes(ex.id) ? "active" : ""}`}
-                        >
-                          <input
-                            type="checkbox"
-                            checked={getItemCustomization(item.id).extras.includes(ex.id)}
-                            onChange={() => toggleExtra(item.id, ex.id)}
-                          />
-                          {ex.label} (+{formatPrice(ex.price)})
-                        </label>
-                      ))}
-                    </div>
+  {item.extras && item.extras.length > 0 && (
+                      <>
+                        <p className="customize-label">Extras</p>
+                        <div className="chip-row">
+                          {item.extras.map((ex, idx) => {
+                            const extraId = String(idx);
+                            const isOn = getItemCustomization(item.id).extras.includes(extraId);
+                            return (
+                              <label key={extraId} className={`chip ${isOn ? "active" : ""}`}>
+                                <input
+                                  type="checkbox"
+                                  checked={isOn}
+                                  onChange={() => toggleExtra(item.id, extraId)}
+                                />
+                                Extra {ex.nombre} (+{formatPrice(ex.precio)})
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
                   </div>
                 )}
 
