@@ -196,7 +196,7 @@ const MENU = [
       { id: "sin-sazonar", label: "Sin sazonar", price: 2000 },
     ],
   },
-  {
+  /*{
     id: "papas-fuente",
     category: "extras",
     name: "Fuentecita de Papas",
@@ -205,7 +205,7 @@ const MENU = [
       { id: "sazonadas", label: "Sazonada", price: 4000 },
       { id: "sin-sazonar", label: "Sin sazonar", price: 4000 },
     ],
-  },
+  },*/
   {
     id: "combo-cheese",
     category: "combos",
@@ -287,6 +287,8 @@ export default function Home() {
   const [deliveryLat, setDeliveryLat] = useState(null);
   const [deliveryLng, setDeliveryLng] = useState(null);
   const [deliveryError, setDeliveryError] = useState("");
+  const [deliveryZone, setDeliveryZone] = useState(null);
+  const [deliveryFee, setDeliveryFee] = useState(0);
   const [lastOrderCode, setLastOrderCode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("fb_last_order_code") || null;
@@ -313,18 +315,51 @@ export default function Home() {
 
   function toggleRemoval(itemId, removalId) {
     const current = getItemCustomization(itemId);
+    const item = MENU.find((m) => m.id === itemId);
+    const removal = (item?.ingredients || []).find((r) => r.id === removalId);
+    const removalLabel = removal?.label?.toLowerCase();
+
     const removals = current.removals.includes(removalId)
       ? current.removals.filter((r) => r !== removalId)
       : [...current.removals, removalId];
-    setCustomization((prev) => ({ ...prev, [itemId]: { ...current, removals } }));
+
+    // Si agregamos una remoción, quitar el extra correspondiente si existe
+    let extras = current.extras;
+    if (removalLabel && !current.removals.includes(removalId)) {
+      const extraToRemove = (item?.extras || []).findIndex(
+        (ex) => ex.nombre.toLowerCase() === removalLabel
+      );
+      if (extraToRemove >= 0) {
+        extras = current.extras.filter((e) => e !== String(extraToRemove));
+      }
+    }
+
+    setCustomization((prev) => ({ ...prev, [itemId]: { ...current, removals, extras } }));
   }
 
   function toggleExtra(itemId, extraId) {
     const current = getItemCustomization(itemId);
+    const item = MENU.find((m) => m.id === itemId);
+    const extra = (item?.extras || [])[Number(extraId)];
+    const extraName = extra?.nombre?.toLowerCase();
+
     const extras = current.extras.includes(extraId)
       ? current.extras.filter((e) => e !== extraId)
       : [...current.extras, extraId];
-    setCustomization((prev) => ({ ...prev, [itemId]: { ...current, extras } }));
+
+    // Si agregamos un extra, quitar la remoción correspondiente si existe
+    let removals = current.removals;
+    if (extraName && !current.extras.includes(extraId)) {
+      const removalToRemove = (item?.ingredients || []).findIndex(
+        (r) => r.label.toLowerCase() === extraName
+      );
+      if (removalToRemove >= 0) {
+        const removalId = item.ingredients[removalToRemove].id;
+        removals = current.removals.filter((r) => r !== removalId);
+      }
+    }
+
+    setCustomization((prev) => ({ ...prev, [itemId]: { ...current, removals, extras } }));
   }
 
   function addToCart(item) {
@@ -410,10 +445,16 @@ export default function Home() {
     }
   }
 
-  const total = useMemo(
+  function handleZoneChange(zone) {
+    setDeliveryZone(zone);
+    setDeliveryFee(zone?.price || 0);
+  }
+
+  const subtotal = useMemo(
     () => cart.reduce((sum, line) => sum + line.price * line.qty, 0),
     [cart]
   );
+  const total = useMemo(() => subtotal + (orderMode === "delivery" ? deliveryFee : 0), [subtotal, orderMode, deliveryFee]);
   const itemCount = useMemo(() => cart.reduce((sum, line) => sum + line.qty, 0), [cart]);
 
   const visibleItems = useMemo(
@@ -435,6 +476,10 @@ async function checkoutOnWhatsApp() {
       setDeliveryError("Por favor, marcá la ubicación exacta en el mapa.");
       return;
     }
+    if (!deliveryZone) {
+      setDeliveryError("La ubicación seleccionada está fuera de la zona de entrega. Mové el pin a una zona cubierta.");
+      return;
+    }
   }
   setDeliveryError("");
 
@@ -453,18 +498,24 @@ async function checkoutOnWhatsApp() {
     "",
     ...lines,
     "",
-    `Total: ${formatPrice(total)}`,
-    "",
-    "Nombre:",
   ];
 
   if (orderMode === "delivery") {
+    messageParts.push(`Subtotal: ${formatPrice(subtotal)}`);
+    messageParts.push(`Envío (${deliveryZone.name}): ${formatPrice(deliveryFee)}`);
+    messageParts.push(`Total: ${formatPrice(total)}`);
+    messageParts.push("");
     const fullAddress = `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`;
     messageParts.push("Dirección:", fullAddress);
     if (deliveryLat !== null && deliveryLng !== null) {
       messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${deliveryLat},${deliveryLng}`);
     }
+  } else {
+    messageParts.push(`Total: ${formatPrice(total)}`);
+    messageParts.push("");
   }
+
+  messageParts.push("Nombre:");
 
   const message = messageParts.filter(Boolean).join("\n");
 
@@ -478,6 +529,9 @@ async function checkoutOnWhatsApp() {
       mode: orderMode,
       items: cart,
       total: total,
+      subtotal: orderMode === "delivery" ? subtotal : null,
+      delivery_fee: orderMode === "delivery" ? deliveryFee : null,
+      delivery_zone: orderMode === "delivery" ? deliveryZone?.id : null,
       code: orderCode,
       delivery_address: fullAddress,
       delivery_lat: orderMode === "delivery" ? deliveryLat : null,
@@ -535,8 +589,22 @@ async function checkoutOnWhatsApp() {
             </div>
 
             <div className="ticket-total">
-              <span>Total</span>
-              <span>{formatPrice(total)}</span>
+              {orderMode === "delivery" && deliveryZone && (
+                <>
+                  <div className="ticket-subtotal">
+                    <span>Subtotal</span>
+                    <span>{formatPrice(subtotal)}</span>
+                  </div>
+                  <div className="ticket-shipping">
+                    <span>Envío ({deliveryZone.name})</span>
+                    <span>{formatPrice(deliveryFee)}</span>
+                  </div>
+                </>
+              )}
+              <div className="ticket-final-total">
+                <span>Total</span>
+                <span>{formatPrice(total)}</span>
+              </div>
             </div>
 
             <div className="ticket-footer">
@@ -550,7 +618,9 @@ async function checkoutOnWhatsApp() {
               </div>
               <p className="ticket-note">
                 {orderMode === "delivery"
-                  ? "Completá la dirección y ubicación arriba. Se abre WhatsApp con tu pedido ya armado."
+                  ? deliveryZone
+                    ? "Ubicación confirmada. Se abre WhatsApp con tu pedido ya armado."
+                    : "Marcá tu ubicación en el mapa para ver el costo de envío."
                   : "Se abre WhatsApp con tu pedido ya armado. Completás nombre ahí."}
               </p>
             </div>
@@ -691,6 +761,7 @@ async function checkoutOnWhatsApp() {
                   <DeliveryMap
                     initialPosition={deliveryLat && deliveryLng ? { lat: deliveryLat, lng: deliveryLng } : null}
                     onPositionChange={handleMapPositionChange}
+                    onZoneChange={handleZoneChange}
                   />
                 </Suspense>
               </div>

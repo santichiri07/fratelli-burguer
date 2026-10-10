@@ -74,17 +74,30 @@ export default function SeguimientoPedido() {
       "",
       ...lines,
       "",
-      `Total: ${formatPrice(order.total)}`,
-      "",
-      "Nombre:",
     ];
 
-    if (order.mode === "delivery" && order.delivery_address) {
-      messageParts.push("Dirección:", order.delivery_address);
+    if (order.mode === "delivery") {
+      const subtotal = order.subtotal ?? order.total - (order.delivery_fee ?? 0);
+      messageParts.push(`Subtotal: ${formatPrice(subtotal)}`);
+      if (order.delivery_zone) {
+        messageParts.push(`Envío (${order.delivery_zone}): ${formatPrice(order.delivery_fee ?? 0)}`);
+      } else if (order.delivery_fee) {
+        messageParts.push(`Envío: ${formatPrice(order.delivery_fee)}`);
+      }
+      messageParts.push(`Total: ${formatPrice(order.total)}`);
+      messageParts.push("");
+      if (order.delivery_address) {
+        messageParts.push("Dirección:", order.delivery_address);
+      }
       if (order.delivery_lat !== null && order.delivery_lng !== null) {
         messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${order.delivery_lat},${order.delivery_lng}`);
       }
+    } else {
+      messageParts.push(`Total: ${formatPrice(order.total)}`);
+      messageParts.push("");
     }
+
+    messageParts.push("Nombre:");
 
     const message = messageParts.filter(Boolean).join("\n");
 
@@ -129,6 +142,11 @@ export default function SeguimientoPedido() {
             <div className="tracking-delivery-info">
               <h3>📍 Dirección de entrega</h3>
               <p className="delivery-address">{order.delivery_address}</p>
+              {order.delivery_zone && (
+                <p className="delivery-zone">
+                  <strong>Zona:</strong> {order.delivery_zone} — Envío: {formatPrice(order.delivery_fee ?? 0)}
+                </p>
+              )}
               {order.delivery_lat !== null && order.delivery_lng !== null && (
                 <a
                   className="delivery-map-link"

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Circle,Tooltip, Polygon, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { DELIVERY_ZONES, detectDeliveryZone } from "../lib/deliveryZones";
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -13,8 +14,8 @@ L.Icon.Default.mergeOptions({
 });
 
 const STORE_LOCATION = {
-  lat: -34.9195,
-  lng: -57.9562,
+  lat: -34.938459640477355,
+  lng: -57.927258001256234,
   label: "Fratelli Burger",
   address: "Diagonal 77 N° 809 e/ 11 y 12, La Plata",
 };
@@ -43,7 +44,6 @@ function StoreMarker() {
 }
 
 function DeliveryPin({ position, onDragEnd }) {
-  // Usamos un DivIcon con emoji: no depende de CDN y siempre se ve
   const pinIcon = L.divIcon({
     className: "delivery-pin-div",
     html: '<div class="pin-emoji">📍</div>',
@@ -56,6 +56,48 @@ function DeliveryPin({ position, onDragEnd }) {
     <Marker position={position} icon={pinIcon} draggable onDragEnd={onDragEnd}>
       <Popup>Tu ubicación de entrega</Popup>
     </Marker>
+  );
+}
+
+function DeliveryZones({ position }) {
+  return (
+    <>
+      {DELIVERY_ZONES.map((zone) => {
+        if (zone.type === "circle") {
+          return (
+            <Circle
+              key={zone.id}
+              center={zone.center}
+              radius={zone.radiusKm * 1000}
+              pathOptions={{
+                color: zone.color,
+                fillColor: zone.color,
+                fillOpacity: 0.15,
+                weight: 2,
+                dashArray: "8, 8",
+              }}
+            >
+              <Tooltip>{zone.name} — ${zone.price.toLocaleString("es-AR")}</Tooltip>
+            </Circle>
+          );
+        }
+        return (
+          <Polygon
+            key={zone.id}
+            positions={zone.points}
+            pathOptions={{
+              color: zone.color,
+              fillColor: zone.color,
+              fillOpacity: 0.15,
+              weight: 2,
+              dashArray: "8, 8",
+            }}
+          >
+            <Tooltip>{zone.name} — ${zone.price.toLocaleString("es-AR")}</Tooltip>
+          </Polygon>
+        );
+      })}
+    </>
   );
 }
 
@@ -91,10 +133,12 @@ export default function DeliveryMap({
   onPositionChange,
   onUseCurrentLocation,
   disabled = false,
+  onZoneChange,
 }) {
   const [position, setPosition] = useState(initialPosition || null);
   const [mapReady, setMapReady] = useState(false);
   const [centerOn, setCenterOn] = useState(null);
+  const [detectedZone, setDetectedZone] = useState(null);
 
   useEffect(() => {
     if (initialPosition && !position) {
@@ -144,6 +188,17 @@ export default function DeliveryMap({
     );
   };
 
+  useEffect(() => {
+    if (position) {
+      const zone = detectDeliveryZone([position.lat, position.lng]);
+      setDetectedZone(zone);
+      onZoneChange?.(zone);
+    } else {
+      setDetectedZone(null);
+      onZoneChange?.(null);
+    }
+  }, [position, onZoneChange]);
+
   const handleMapReady = (map) => {
     setMapReady(true);
     if (position) {
@@ -189,6 +244,7 @@ export default function DeliveryMap({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
+          <DeliveryZones position={position} />
           <StoreMarker />
           {position && <DeliveryPin position={[position.lat, position.lng]} onDragEnd={handleDragEnd} />}
           <MapInteractions
@@ -198,6 +254,35 @@ export default function DeliveryMap({
           />
           <MapCenterer centerOn={centerOn} />
         </MapContainer>
+      </div>
+
+      <div className="delivery-zone-legend">
+        <h4>Zonas de envío</h4>
+        <div className="zone-legend-list">
+          {DELIVERY_ZONES.map((zone) => (
+            <div key={zone.id} className={`zone-legend-item ${detectedZone?.id === zone.id ? "active" : ""}`}>
+              <span className="zone-color" style={{ backgroundColor: zone.color }} />
+              <span className="zone-info">
+                <span className="zone-name">{zone.name}</span>
+                <span className="zone-price">${zone.price.toLocaleString("es-AR")}</span>
+              </span>
+            </div>
+          ))}
+        </div>
+        {position && (
+          <div className="detected-zone-info">
+            {detectedZone ? (
+              <>
+                <span className="success">✓ Zona detectada: </span>
+                <strong>{detectedZone.name}</strong>
+                <span> — Envío: </span>
+                <strong>${detectedZone.price.toLocaleString("es-AR")}</strong>
+              </>
+            ) : (
+              <span className="error">⚠ Fuera de zona de entrega. Mové el pin a una zona cubierta.</span>
+            )}
+          </div>
+        )}
       </div>
 
       <p className="map-hint">

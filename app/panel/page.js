@@ -207,6 +207,11 @@ export default function Panel() {
                 {order.mode === "delivery" && order.delivery_address && (
                   <div className="panel-delivery-info">
                     <p className="panel-delivery-address">{order.delivery_address}</p>
+                    {order.delivery_zone && (
+                      <p className="panel-delivery-zone">
+                        <strong>Zona:</strong> {order.delivery_zone} — Envío: {formatPrice(order.delivery_fee ?? 0)}
+                      </p>
+                    )}
                     {order.delivery_lat !== null && order.delivery_lng !== null && (
                       <a
                         className="panel-map-btn"
@@ -263,6 +268,11 @@ export default function Panel() {
                 {order.mode === "delivery" && order.delivery_address && (
                   <div className="panel-delivery-info">
                     <p className="panel-delivery-address">{order.delivery_address}</p>
+                    {order.delivery_zone && (
+                      <p className="panel-delivery-zone">
+                        <strong>Zona:</strong> {order.delivery_zone} — Envío: {formatPrice(order.delivery_fee ?? 0)}
+                      </p>
+                    )}
                     {order.delivery_lat !== null && order.delivery_lng !== null && (
                       <a
                         className="panel-map-btn"
