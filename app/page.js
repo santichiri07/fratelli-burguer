@@ -57,11 +57,17 @@ const EXTRAS = [
   { id: "extra-carne", label: "Extra carne", price: 2500 },
   { id: "salsa-extra", label: "Salsa adicional", price: 500 },
 ];
+const BREADS = [
+  { id: "papa", label: "Pan de papa" },
+  { id: "queso", label: "Pan de queso" },
+  { id: "sesamo", label: "Pan de sésamo" },
+];
  //
 const MENU = [
   {
     id: "cheese",
     category: "hamburguesas",
+    image: "/images/burger-cheese.jpg",
     customizable: true,
     name: "Burger Cheese",
     desc: "Pan de papa, Medallon de Carne, Cheddar. Acompañada con papas fritas",
@@ -69,17 +75,18 @@ const MENU = [
     { id: "cheddar", label: "Cheddar" },
     ],
   extras: [
-    { nombre: "Cheddar", precio: 500 },
-    { nombre: "medallon de carne", precio: 800 },
+    { nombre: "Cheddar", precio: 300 },
+    { nombre: "medallon de carne", precio: 1550 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 7000 },
-      { id: "doble", label: "Doble", price: 9000 },
+      { id: "simple", label: "Simple", price: 8000 },
+      { id: "doble", label: "Doble", price: 9500 },
     ],
   },
   {
     id: "bacon cheese",
     category: "hamburguesas",
+    image: "/images/bacon-cheese.jpg",
     customizable: true,
     name: "Bacon Cheese burguer",
     desc: "Pan de papa, Medallon de Carne y Bacon. Acompañada con papas fritas",
@@ -88,7 +95,7 @@ const MENU = [
     ],
     extras: [
     { nombre: "Bacon", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
+    { nombre: "Medallon de carne", precio: 1550 },
   ],
     variants: [
       { id: "simple", label: "Simple", price: 10000 },
@@ -125,6 +132,7 @@ const MENU = [
   {
     id: "OKLAHOMA",
     category: "hamburguesas",
+    image: "/images/oklahoma.jpg",
     customizable: true,
     name: "OKLAHOMA burger",
     desc: "Pan de papa, Medallon de carne, Cebolla laminada y Cheedar. Acompañada con papas fritas",
@@ -310,8 +318,13 @@ export default function Home() {
   }
 
   function getItemCustomization(itemId) {
-    return customization[itemId] || { removals: [], extras: [] };
+    return customization[itemId] || { removals: [], extras: [], bread: null };
   }
+
+  function chooseBread(itemId, breadId) {
+  const current = getItemCustomization(itemId);
+  setCustomization((prev) => ({ ...prev, [itemId]: { ...current, bread: breadId } }));
+ }
 
   function toggleRemoval(itemId, removalId) {
     const current = getItemCustomization(itemId);
@@ -370,7 +383,10 @@ export default function Home() {
     let notesParts = [];
 
     if (item.customizable) {
-      const custom = getItemCustomization(item.id);
+      
+    const bread = BREADS.find((b) => b.id === custom.bread);
+    if (!bread) return;
+    notesParts.push(bread.label);
 
       custom.removals.forEach((rId) => {
   const removal = (item.ingredients || []).find((r) => r.id === rId);
@@ -774,10 +790,20 @@ async function checkoutOnWhatsApp() {
         <main className="menu">
           <div className="menu-grid">
             {visibleItems.map((item) => (
-              <div className="item-card" key={item.id}>
-                <h3>{item.name}</h3>
-                <p className="desc">{item.desc}</p>
+             <div className="item-card" key={item.id}>
+  {item.image && (
+    <div className="item-image-container">
+      <img
+        src={item.image}
+        alt={item.name}
+        className="item-image"
+        loading="lazy"
+      />
+    </div>
+  )}
 
+  <h3>{item.name}</h3>
+  <p className="desc">{item.desc}</p>
                 <div className="variant-row">
                   {item.variants.map((variant) => {
                     const isSelected = selectedVariant[item.id] === variant.id;
@@ -803,6 +829,23 @@ async function checkoutOnWhatsApp() {
 
                 {item.customizable && (
                   <div className="customize-box">
+                    <p className="customize-label">Elegí tu pan (obligatorio)</p>
+        <div className="chip-row">
+  {BREADS.map((b) => {
+    const isOn = getItemCustomization(item.id).bread === b.id;
+    return (
+      <label key={b.id} className={`chip ${isOn ? "active" : ""}`}>
+        <input
+          type="radio"
+          name={`bread-${item.id}`}
+          checked={isOn}
+          onChange={() => chooseBread(item.id, b.id)}
+        />
+        {b.label}
+      </label>
+    );
+  })}
+</div>
                     {item.ingredients && item.ingredients.length > 0 && (
   <>
     <p className="customize-label">Sacar ingredientes</p>
@@ -848,9 +891,15 @@ async function checkoutOnWhatsApp() {
                   </div>
                 )}
 
-                <button className="add-btn" onClick={() => addToCart(item)}>
-                  Agregar al pedido
-                </button>
+                <button
+  className="add-btn"
+  onClick={() => addToCart(item)}
+  disabled={item.customizable && !getItemCustomization(item.id).bread}
+>
+  {item.customizable && !getItemCustomization(item.id).bread
+    ? "Elegí un pan para continuar"
+    : "Agregar al pedido"}
+</button>
               </div>
             ))}
           </div>
