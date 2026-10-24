@@ -26,7 +26,7 @@ const CATEGORIES = [
     desc: "Tu hamburguesa favorita con papas y bebida, todo junto y más conveniente.",
     image: "/cat-combos.jpg",
   },
-   */
+  */
    /* bebidas desactivadas temporalmente!
    {
     id: "bebidas",
@@ -368,7 +368,7 @@ export default function Home() {
     setCustomization((prev) => ({ ...prev, [itemId]: { ...current, removals, extras } }));
   }
 
-  function addToCart(item) {
+   function addToCart(item) {
     const variantId = selectedVariant[item.id];
     const variant = item.variants.find((v) => v.id === variantId);
 
@@ -376,24 +376,26 @@ export default function Home() {
     let notesParts = [];
 
     if (item.customizable) {
-      
-    const bread = BREADS.find((b) => b.id === custom.bread);
-    if (!bread) return;
-    notesParts.push(bread.label);
+      const custom = getItemCustomization(item.id);
+
+      const bread = BREADS.find((b) => b.id === custom.bread);
+      if (!bread) return;
+      notesParts.push(bread.label);
 
       custom.removals.forEach((rId) => {
-  const removal = (item.ingredients || []).find((r) => r.id === rId);
-  if (removal) notesParts.push(`Sin ${removal.label}`);
-});
+        const removal = (item.ingredients || []).find((r) => r.id === rId);
+        if (removal) notesParts.push(`Sin ${removal.label}`);
+      });
 
-            custom.extras.forEach((eId) => {
+      custom.extras.forEach((eId) => {
         const extra = (item.extras || [])[Number(eId)];
         if (extra) {
           notesParts.push(`Extra ${extra.nombre}`);
           extraPrice += extra.precio;
         }
       });
-      }
+    }
+
     const notes = notesParts.join(", ");
     const cartLineId = `${item.id}-${variant.id}-${notes}`;
 
