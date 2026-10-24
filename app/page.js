@@ -19,13 +19,14 @@ const CATEGORIES = [
     desc: "Amasamos el mejor pan de papa que vas a probar. Ahumamos nuestra panceta con madera de manzano.",
     image: "/cat-burgers.jpg",
   },
-  {
+  /*}
     id: "combos",
     label: "🍟 Combos",
     title: "COMBOS",
     desc: "Tu hamburguesa favorita con papas y bebida, todo junto y más conveniente.",
     image: "/cat-combos.jpg",
   },
+   */
    /* bebidas desactivadas temporalmente!
    {
     id: "bebidas",
@@ -70,13 +71,12 @@ const MENU = [
     image: "/images/burger-cheese.jpg",
     customizable: true,
     name: "Burger Cheese",
-    desc: "Pan de papa, Medallon de Carne, Cheddar. Acompañada con papas fritas",
+    desc: "Pan a eleccion, Medallon de Carne, Cheddar. Acompañada con papas fritas",
     ingredients: [
     { id: "cheddar", label: "Cheddar" },
     ],
   extras: [
-    { nombre: "Cheddar", precio: 300 },
-    { nombre: "medallon de carne", precio: 1550 },
+    {nombre: "medallon de carne", precio: 1900 },
   ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
@@ -89,16 +89,16 @@ const MENU = [
     image: "/images/bacon-cheese.jpg",
     customizable: true,
     name: "Bacon Cheese burguer",
-    desc: "Pan de papa, Medallon de Carne y Bacon. Acompañada con papas fritas",
+    desc: "Pan a eleccion, Medallon de Carne, Cheddar y Bacon. Acompañada con papas fritas",
     ingredients: [
     { id: "bacon", label: "Bacon" },
+    { id: "cheddar", label: "Cheddar" },
     ],
     extras: [
-    { nombre: "Bacon", precio: 500 },
-    { nombre: "Medallon de carne", precio: 1550 },
+    { nombre: "Medallon de carne", precio: 1900 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 10000 },
+      { id: "simple", label: "Simple", price: 10500 },
       { id: "doble", label: "Doble", price: 12000 },
     ],
   },
@@ -106,8 +106,9 @@ const MENU = [
     id: "AMERICANA",
     category: "hamburguesas",
     customizable: true,
+    image: "/images/americana.jpg",
     name: "american",
-    desc: "Pan de papa, Medallon de carne,cheddar, Lechuga, Tomate, Pepinillos, Aros de cebolla y salsa. Acompañada con papas fritas",
+    desc: "Pan a eleccion, Medallon de carne,cheddar, Lechuga, Tomate, Pepinillos, Aros de cebolla y salsa. Acompañada con papas fritas",
    ingredients: [
     { id: "lechuga", label: "Lechuga" },
     { id: "tomate", label: "Tomate" },
@@ -117,15 +118,10 @@ const MENU = [
     { id: "salsa", label: "Salsa" },
     ],
     extras: [
-    { nombre: "lechuga", precio: 800 },
-    { nombre: "Cheddar", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
-    { nombre: "tomate", precio: 500 },
-    { nombre: "pepinillos", precio: 800 },
-    { nombre: "aros de cebolla", precio: 500 },
+    { nombre: "Medallon de carne", precio: 1900 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 8000 },
+      { id: "simple", label: "Simple", price: 9000 },
       { id: "doble", label: "Doble", price: 10000 },
     ],
   },
@@ -135,19 +131,17 @@ const MENU = [
     image: "/images/oklahoma.jpg",
     customizable: true,
     name: "OKLAHOMA burger",
-    desc: "Pan de papa, Medallon de carne, Cebolla laminada y Cheedar. Acompañada con papas fritas",
+    desc: "Pan a eleccion, Medallon de carne, Cebolla laminada y Cheedar. Acompañada con papas fritas",
     ingredients: [
     { id: "cebolla", label: "Cebolla laminada" },
     { id: "cheddar", label: "Cheddar" },
     ],
     extras: [
-    { nombre: "cebolla laminada", precio: 800 },
-    { nombre: "Cheddar", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
+    { nombre: "Medallon de carne", precio: 1900 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 8000 },
-      { id: "doble", label: "Doble", price: 10000 },
+      { id: "simple", label: "Simple", price: 9500 },
+      { id: "doble", label: "Doble", price: 10500 },
     ],
   },
    {
@@ -155,7 +149,8 @@ const MENU = [
     category: "hamburguesas",
     customizable: true,
     name: "estilo americano",
-    desc: "Pan de papa, Medallon de carne, Cheddar, Ceboolla grillada, Pepinillo y Salsa. Acompañada con papas fritas",
+    image: "/images/estilo americano.jpg",
+    desc: "Pan a eleccion, Medallon de carne, Cheddar, Ceboolla grillada, Pepinillo y Salsa. Acompañada con papas fritas",
     ingredients: [
     { id: "cheddar", label: "Cheddar" },
     { id: "cebolla", label: "Cebolla" },
@@ -163,45 +158,43 @@ const MENU = [
     { id: "salsa", label: "Salsa" },
     ],
     extras: [
-    { nombre: "Cheddar", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
-    { nombre: "cebolla grillada", precio: 500 },
+    { nombre: "Medallon de carne", precio: 1900 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 8000 },
-      { id: "doble", label: "Doble", price: 10000 },
+      { id: "simple", label: "Simple", price: 9500 },
+      { id: "doble", label: "Doble", price: 10500 },
     ],
   },
   {
     id: "La Clásica ¼",
     category: "hamburguesas",
+    image: "/images/clasica un cuarto.jpg",
     customizable: true,
     name: "La Clásica ¼",
-    desc: "Pan de papa, Medallon de carne, Cheddar, Pepinillo, Salsa de ketchup y mostaza. Acompañada con papas fritas",
+    desc: "Pan a eleccion, Medallon de carne, Cheddar, Pepinillo, Salsa de ketchup y mostaza. Acompañada con papas fritas",
     ingredients: [
     { id: "cheddar", label: "Cheddar" },
     { id: "salsa", label: "Salsa" },
     { id: "pepinillos", label: "Pepinillos" },
     ],
     extras: [
-    { nombre: "Cheddar", precio: 500 },
-    { nombre: "Medallon de carne", precio: 800 },
-    { nombre: "pepinillos", precio: 800 },
+    { nombre: "Medallon de carne", precio: 1900 },
   ],
     variants: [
-      { id: "simple", label: "Simple", price: 8000 },
-      { id: "doble", label: "Doble", price: 10000 },
+      { id: "simple", label: "Simple", price: 9500 },
+      { id: "doble", label: "Doble", price: 10500 },
     ],
   },
   {
     id: "papas-sobre",
     name: "Sobre de Papas",
+    image: "/images/papas.jpg",
     category: "extras",
-    desc: "Porción individual.",
+    desc: "Porción individual de 100 gramos de papas fritas.",
     
     variants: [
-      { id: "sazonadas", label: "Sazonadas", price: 2000 },
-      { id: "sin-sazonar", label: "Sin sazonar", price: 2000 },
+      { id: "sazonadas", label: "Sazonadas", price: 1500 },
+      { id: "sin-sazonar", label: "Sin sazonar", price: 1500 },
     ],
   },
   /*{
