@@ -234,7 +234,11 @@ export default function Panel() {
                   ))}
                 </ul>
 
-                <div className="panel-order-total">Total: {formatPrice(order.total)}</div>
+                {order.payment_method && (
+               <div className="panel-order-notes">
+                {order.payment_method === "efectivo" ? "💵 Paga en efectivo al retirar" : "💳 Paga por transferencia"}
+                </div>
+)}
 
                 <div className="panel-actions-row">
                   <button className="panel-refresh" onClick={() => unarchiveOrder(order.id)}>

@@ -71,6 +71,7 @@ export default function SeguimientoPedido() {
       `¡Hola! Quiero hacer el pedido #${order.code}:`,
       "",
       `Modalidad: ${modeLabel}`,
+      `Pago: ${order.payment_method === "efectivo" ? "Efectivo (al retirar)" : "Transferencia"}`,
       "",
       ...lines,
       "",
@@ -135,7 +136,8 @@ export default function SeguimientoPedido() {
            </button>
 
           <div className="tracking-payment-note">
-            <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acosta</strong>
+            <h3>💳 Si elegiste transferencia</h3>
+            <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
           </div>
 
           {order.mode === "delivery" && order.delivery_address && (

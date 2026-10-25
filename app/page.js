@@ -293,6 +293,7 @@ export default function Home() {
   const [deliveryError, setDeliveryError] = useState("");
   const [deliveryZone, setDeliveryZone] = useState(null);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [paymentMethod, setPaymentMethod] = useState(null); // "efectivo" | "transferencia" | null
   const [lastOrderCode, setLastOrderCode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("fb_last_order_code") || null;
@@ -481,8 +482,13 @@ export default function Home() {
 
   const currentCategory = CATEGORIES.find((c) => c.id === viewingCategory);
 
+  /* En delivery el pago es siempre por transferencia. En take away elige el cliente. */
+  const effectivePayment = orderMode === "delivery" ? "transferencia" : paymentMethod;
+  const paymentLabel = effectivePayment === "efectivo" ? "Efectivo (al retirar)" : "Transferencia";
+
   async function checkoutOnWhatsApp() {
     if (cart.length === 0) return;
+    if (orderMode === "takeaway" && !paymentMethod) return;
 
     /* Revisamos que el local siga abierto justo antes de enviar */
     const { data: storeNow } = await supabase
@@ -524,6 +530,7 @@ export default function Home() {
       `¡Hola! Quiero hacer el pedido #${orderCode}:`,
       "",
       `Modalidad: ${modeLabel}`,
+      `Pago: ${paymentLabel}`,
       "",
       ...lines,
       "",
@@ -563,6 +570,7 @@ export default function Home() {
         delivery_fee: orderMode === "delivery" ? deliveryFee : null,
         delivery_zone: orderMode === "delivery" ? deliveryZone?.id : null,
         code: orderCode,
+        payment_method: effectivePayment,
         delivery_address: fullAddress,
         delivery_lat: orderMode === "delivery" ? deliveryLat : null,
         delivery_lng: orderMode === "delivery" ? deliveryLng : null,
@@ -636,15 +644,54 @@ export default function Home() {
               </div>
             </div>
 
-
             <div className="ticket-footer">
-              <div className="ticket-footer-row">
-                <button className="whatsapp-btn" onClick={checkoutOnWhatsApp} disabled={cart.length === 0}>
-                  Enviar pedido por WhatsApp
-                </button>
-                <div className="payment-note">
-                  <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
+              {orderMode === "takeaway" && (
+                <div className="payment-box">
+                  <p className="payment-title">¿Cómo vas a pagar?</p>
+                  <div className="payment-options">
+                    <label className={`payment-option ${paymentMethod === "efectivo" ? "active" : ""}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "efectivo"}
+                        onChange={() => setPaymentMethod("efectivo")}
+                      />
+                      💵 Efectivo
+                    </label>
+                    <label className={`payment-option ${paymentMethod === "transferencia" ? "active" : ""}`}>
+                      <input
+                        type="radio"
+                        name="payment"
+                        checked={paymentMethod === "transferencia"}
+                        onChange={() => setPaymentMethod("transferencia")}
+                      />
+                      💳 Transferencia
+                    </label>
+                  </div>
                 </div>
+              )}
+
+              <div className="ticket-footer-row">
+                <button
+                  className="whatsapp-btn"
+                  onClick={checkoutOnWhatsApp}
+                  disabled={cart.length === 0 || (orderMode === "takeaway" && !paymentMethod)}
+                >
+                  {orderMode === "takeaway" && !paymentMethod && cart.length > 0
+                    ? "Elegí cómo pagar"
+                    : "Enviar pedido por WhatsApp"}
+                </button>
+                {effectivePayment === "efectivo" && (
+                  <div className="payment-note">
+                    <strong>💵 Pago:</strong> Abonás en efectivo cuando retirás tu pedido.
+                  </div>
+                )}
+                {effectivePayment === "transferencia" && (
+                  <div className="payment-note">
+                    
+                    <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
+                  </div>
+                )}
               </div>
               <p className="ticket-note">
                 {orderMode === "delivery"
