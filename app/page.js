@@ -19,7 +19,8 @@ const CATEGORIES = [
     desc: "Amasamos el mejor pan de papa que vas a probar. Ahumamos nuestra panceta con madera de manzano.",
     image: "/cat-burgers.jpg",
   },
-  /*}
+  /* combos desactivados temporalmente
+  {
     id: "combos",
     label: "🍟 Combos",
     title: "COMBOS",
@@ -27,15 +28,15 @@ const CATEGORIES = [
     image: "/cat-combos.jpg",
   },
   */
-   /* bebidas desactivadas temporalmente!
-   {
+  /* bebidas desactivadas temporalmente
+  {
     id: "bebidas",
     label: "🥤 Bebidas",
     title: "BEBIDAS",
     desc: "Cervezas, gaseosas línea Pepsi y agua bien fría.",
     image: "/cat-bebidas.jpg",
   },
-    */
+  */
   {
     id: "extras",
     label: "➕ Extras",
@@ -45,25 +46,12 @@ const CATEGORIES = [
   },
 ];
 
-const REMOVALS = [
-  { id: "sin-lechuga", label: "Sin lechuga" },
-  { id: "sin-tomate", label: "Sin tomate" },
-  { id: "sin-cheddar", label: "Sin cheddar" },
-  { id: "sin-cebolla", label: "Sin cebolla" },
-];
-//
-const EXTRAS = [
-  { id: "extra-cheddar", label: "Extra cheddar", price: 1000 },
-  { id: "extra-bacon", label: "Extra bacon", price: 1500 },
-  { id: "extra-carne", label: "Extra carne", price: 2500 },
-  { id: "salsa-extra", label: "Salsa adicional", price: 500 },
-];
 const BREADS = [
   { id: "papa", label: "Pan de papa" },
   { id: "queso", label: "Pan de queso" },
   { id: "sesamo", label: "Pan de sésamo" },
 ];
- //
+
 const MENU = [
   {
     id: "cheese",
@@ -72,12 +60,8 @@ const MENU = [
     customizable: true,
     name: "Burger Cheese",
     desc: "Pan a eleccion, Medallon de Carne, Cheddar. Acompañada con papas fritas",
-    ingredients: [
-    { id: "cheddar", label: "Cheddar" },
-    ],
-  extras: [
-    {nombre: "medallon de carne", precio: 1900 },
-  ],
+    ingredients: [{ id: "cheddar", label: "Cheddar" }],
+    extras: [{ nombre: "medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 9500 },
@@ -91,12 +75,10 @@ const MENU = [
     name: "Bacon Cheese burguer",
     desc: "Pan a eleccion, Medallon de Carne, Cheddar y Bacon. Acompañada con papas fritas",
     ingredients: [
-    { id: "bacon", label: "Bacon" },
-    { id: "cheddar", label: "Cheddar" },
+      { id: "bacon", label: "Bacon" },
+      { id: "cheddar", label: "Cheddar" },
     ],
-    extras: [
-    { nombre: "Medallon de carne", precio: 1900 },
-  ],
+    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 10500 },
       { id: "doble", label: "Doble", price: 12000 },
@@ -109,17 +91,15 @@ const MENU = [
     image: "/images/americana.jpg",
     name: "american",
     desc: "Pan a eleccion, Medallon de carne,cheddar, Lechuga, Tomate, Pepinillos, Aros de cebolla y salsa. Acompañada con papas fritas",
-   ingredients: [
-    { id: "lechuga", label: "Lechuga" },
-    { id: "tomate", label: "Tomate" },
-    { id: "pepinillos", label: "Pepinillos" },
-    { id: "cheddar", label: "Cheddar" },
-    { id: "aros-cebolla", label: "Aros de cebolla" },
-    { id: "salsa", label: "Salsa" },
+    ingredients: [
+      { id: "lechuga", label: "Lechuga" },
+      { id: "tomate", label: "Tomate" },
+      { id: "pepinillos", label: "Pepinillos" },
+      { id: "cheddar", label: "Cheddar" },
+      { id: "aros-cebolla", label: "Aros de cebolla" },
+      { id: "salsa", label: "Salsa" },
     ],
-    extras: [
-    { nombre: "Medallon de carne", precio: 1900 },
-  ],
+    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 9000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -133,18 +113,16 @@ const MENU = [
     name: "OKLAHOMA burger",
     desc: "Pan a eleccion, Medallon de carne, Cebolla laminada y Cheedar. Acompañada con papas fritas",
     ingredients: [
-    { id: "cebolla", label: "Cebolla laminada" },
-    { id: "cheddar", label: "Cheddar" },
+      { id: "cebolla", label: "Cebolla laminada" },
+      { id: "cheddar", label: "Cheddar" },
     ],
-    extras: [
-    { nombre: "Medallon de carne", precio: 1900 },
-  ],
+    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
     ],
   },
-   {
+  {
     id: "Estilo americano",
     category: "hamburguesas",
     customizable: true,
@@ -152,14 +130,12 @@ const MENU = [
     image: "/images/estilo americano.jpg",
     desc: "Pan a eleccion, Medallon de carne, Cheddar, Ceboolla grillada, Pepinillo y Salsa. Acompañada con papas fritas",
     ingredients: [
-    { id: "cheddar", label: "Cheddar" },
-    { id: "cebolla", label: "Cebolla" },
-    { id: "pepinillos", label: "Pepinillos" },
-    { id: "salsa", label: "Salsa" },
+      { id: "cheddar", label: "Cheddar" },
+      { id: "cebolla", label: "Cebolla" },
+      { id: "pepinillos", label: "Pepinillos" },
+      { id: "salsa", label: "Salsa" },
     ],
-    extras: [
-    { nombre: "Medallon de carne", precio: 1900 },
-  ],
+    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
@@ -173,13 +149,11 @@ const MENU = [
     name: "La Clásica ¼",
     desc: "Pan a eleccion, Medallon de carne, Cheddar, Pepinillo, Salsa de ketchup y mostaza. Acompañada con papas fritas",
     ingredients: [
-    { id: "cheddar", label: "Cheddar" },
-    { id: "salsa", label: "Salsa" },
-    { id: "pepinillos", label: "Pepinillos" },
+      { id: "cheddar", label: "Cheddar" },
+      { id: "salsa", label: "Salsa" },
+      { id: "pepinillos", label: "Pepinillos" },
     ],
-    extras: [
-    { nombre: "Medallon de carne", precio: 1900 },
-  ],
+    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
@@ -191,7 +165,6 @@ const MENU = [
     image: "/images/papas.jpg",
     category: "extras",
     desc: "Porción individual de 100 gramos de papas fritas.",
-    
     variants: [
       { id: "sazonadas", label: "Sazonadas", price: 1500 },
       { id: "sin-sazonar", label: "Sin sazonar", price: 1500 },
@@ -251,7 +224,7 @@ const MENU = [
 ];
 
 /* =========================================================
-   2) ACÁ PONÉS TU NÚMERO DE WHATSAPP
+   2) NÚMERO DE WHATSAPP
    Formato: código de país + código de área + número, sin
    espacios ni el "+". Ejemplo Argentina (La Plata):
    549221XXXXXXX
@@ -265,19 +238,10 @@ function formatPrice(n) {
 export default function Home() {
   const [orderMode, setOrderMode] = useState(null); // "takeaway" | "delivery" | null
   const [viewingCategory, setViewingCategory] = useState(null); // id de categoría o null (portada)
-  const [cart, setCart] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("fb_cart");
-      if (saved) {
-        try {
-          return JSON.parse(saved);
-        } catch {
-          return [];
-        }
-      }
-    }
-    return [];
-  });
+  // El carrito arranca vacío y se carga desde localStorage en un useEffect
+  // (evita errores de hidratación entre servidor y cliente).
+  const [cart, setCart] = useState([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
   const [customization, setCustomization] = useState({});
   const [selectedVariant, setSelectedVariant] = useState(
@@ -290,17 +254,31 @@ export default function Home() {
   const [deliveryError, setDeliveryError] = useState("");
   const [deliveryZone, setDeliveryZone] = useState(null);
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const [lastOrderCode, setLastOrderCode] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("fb_last_order_code") || null;
-    }
-    return null;
-  });
+  const [lastOrderCode, setLastOrderCode] = useState(null);
+  const [comandaNumber, setComandaNumber] = useState(null);
+  const [checkoutError, setCheckoutError] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  // Persistir carrito en localStorage
+  // Cargar carrito y último pedido desde localStorage (solo en el cliente)
   useEffect(() => {
-    localStorage.setItem("fb_cart", JSON.stringify(cart));
-  }, [cart]);
+    try {
+      const saved = localStorage.getItem("fb_cart");
+      if (saved) setCart(JSON.parse(saved));
+      setLastOrderCode(localStorage.getItem("fb_last_order_code") || null);
+    } catch {
+      // si el JSON está corrupto, arrancamos con el carrito vacío
+    }
+    setComandaNumber(Math.floor(Math.random() * 900 + 100));
+    setCartLoaded(true);
+  }, []);
+
+  // Persistir carrito en localStorage (recién después de haberlo cargado)
+  useEffect(() => {
+    if (!cartLoaded) return;
+    try {
+      localStorage.setItem("fb_cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart, cartLoaded]);
 
   function goToCategory(categoryId) {
     setViewingCategory(categoryId);
@@ -315,9 +293,9 @@ export default function Home() {
   }
 
   function chooseBread(itemId, breadId) {
-  const current = getItemCustomization(itemId);
-  setCustomization((prev) => ({ ...prev, [itemId]: { ...current, bread: breadId } }));
- }
+    const current = getItemCustomization(itemId);
+    setCustomization((prev) => ({ ...prev, [itemId]: { ...current, bread: breadId } }));
+  }
 
   function toggleRemoval(itemId, removalId) {
     const current = getItemCustomization(itemId);
@@ -368,7 +346,7 @@ export default function Home() {
     setCustomization((prev) => ({ ...prev, [itemId]: { ...current, removals, extras } }));
   }
 
-   function addToCart(item) {
+  function addToCart(item) {
     const variantId = selectedVariant[item.id];
     const variant = item.variants.find((v) => v.id === variantId);
 
@@ -465,7 +443,10 @@ export default function Home() {
     () => cart.reduce((sum, line) => sum + line.price * line.qty, 0),
     [cart]
   );
-  const total = useMemo(() => subtotal + (orderMode === "delivery" ? deliveryFee : 0), [subtotal, orderMode, deliveryFee]);
+  const total = useMemo(
+    () => subtotal + (orderMode === "delivery" ? deliveryFee : 0),
+    [subtotal, orderMode, deliveryFee]
+  );
   const itemCount = useMemo(() => cart.reduce((sum, line) => sum + line.qty, 0), [cart]);
 
   const visibleItems = useMemo(
@@ -475,68 +456,43 @@ export default function Home() {
 
   const currentCategory = CATEGORIES.find((c) => c.id === viewingCategory);
 
-async function checkoutOnWhatsApp() {
-  if (cart.length === 0) return;
+  async function checkoutOnWhatsApp() {
+    if (cart.length === 0 || saving) return;
 
-  if (orderMode === "delivery") {
-    if (!deliveryStreet.trim()) {
-      setDeliveryError("Por favor, ingresá la calle y número.");
-      return;
+    setCheckoutError("");
+
+    if (orderMode === "delivery") {
+      if (!deliveryStreet.trim()) {
+        setDeliveryError("Por favor, ingresá la calle y número.");
+        setCheckoutError("Por favor, ingresá la calle y número.");
+        return;
+      }
+      if (deliveryLat === null || deliveryLng === null) {
+        setDeliveryError("Por favor, marcá la ubicación exacta en el mapa.");
+        setCheckoutError("Por favor, marcá la ubicación exacta en el mapa.");
+        return;
+      }
+      if (!deliveryZone) {
+        const msg = "La ubicación seleccionada está fuera de la zona de entrega. Mové el pin a una zona cubierta.";
+        setDeliveryError(msg);
+        setCheckoutError(msg);
+        return;
+      }
     }
-    if (deliveryLat === null || deliveryLng === null) {
-      setDeliveryError("Por favor, marcá la ubicación exacta en el mapa.");
-      return;
-    }
-    if (!deliveryZone) {
-      setDeliveryError("La ubicación seleccionada está fuera de la zona de entrega. Mové el pin a una zona cubierta.");
-      return;
-    }
-  }
-  setDeliveryError("");
+    setDeliveryError("");
 
-  const orderCode = String(Math.floor(1000 + Math.random() * 9000));
-  const lines = cart.map((line) => {
-    const notesPart = line.notes ? ` [${line.notes}]` : "";
-    return `• ${line.qty}x ${line.name} (${line.variantLabel})${notesPart} - ${formatPrice(line.price * line.qty)}`;
-  });
+    const orderCode = String(Math.floor(1000 + Math.random() * 9000));
 
-  const modeLabel = orderMode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
+    const fullAddress =
+      orderMode === "delivery"
+        ? `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`
+        : null;
 
-  const messageParts = [
-    `¡Hola! Quiero hacer el pedido #${orderCode}:`,
-    "",
-    `Modalidad: ${modeLabel}`,
-    "",
-    ...lines,
-    "",
-  ];
-
-  if (orderMode === "delivery") {
-    messageParts.push(`Subtotal: ${formatPrice(subtotal)}`);
-    messageParts.push(`Envío (${deliveryZone.name}): ${formatPrice(deliveryFee)}`);
-    messageParts.push(`Total: ${formatPrice(total)}`);
-    messageParts.push("");
-    const fullAddress = `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`;
-    messageParts.push("Dirección:", fullAddress);
-    if (deliveryLat !== null && deliveryLng !== null) {
-      messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${deliveryLat},${deliveryLng}`);
-    }
-  } else {
-    messageParts.push(`Total: ${formatPrice(total)}`);
-    messageParts.push("");
-  }
-
-  messageParts.push("Nombre:");
-
-  const message = messageParts.filter(Boolean).join("\n");
-
-  /* Guardamos el pedido en Supabase. Si falla, igual dejamos
-     que el cliente pueda mandar el WhatsApp (no lo bloqueamos). */
-  try {
-    const fullAddress = orderMode === "delivery"
-      ? `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`
-      : null;
-    await supabase.from("orders").insert({
+    /* Guardamos el pedido en Supabase.
+       OJO: supabase.insert() NO lanza excepción cuando falla,
+       devuelve { error }. Por eso se revisa explícitamente. */
+    setSaving(true);
+    const { error } = await supabase.from("orders").insert({
       mode: orderMode,
       items: cart,
       total: total,
@@ -548,15 +504,22 @@ async function checkoutOnWhatsApp() {
       delivery_lat: orderMode === "delivery" ? deliveryLat : null,
       delivery_lng: orderMode === "delivery" ? deliveryLng : null,
     });
-    // Guardar código del último pedido para acceso rápido
-    localStorage.setItem("fb_last_order_code", orderCode);
-  } catch (err) {
-    console.error("No se pudo guardar el pedido en la base:", err);
-  }
+    setSaving(false);
 
-  window.location.href = `/pedido/${orderCode}`;
-}
-  
+    if (error) {
+      console.error("Error guardando pedido:", error);
+      const msg = "No pudimos guardar el pedido: " + error.message;
+      setCheckoutError(msg);
+      if (orderMode === "delivery") setDeliveryError(msg);
+      return;
+    }
+
+    try {
+      localStorage.setItem("fb_last_order_code", orderCode);
+    } catch {}
+
+    window.location.href = `/pedido/${orderCode}`;
+  }
 
   const cartWidget = (
     <>
@@ -573,7 +536,7 @@ async function checkoutOnWhatsApp() {
                 ✕
               </button>
               <h2>Tu pedido</h2>
-              <p>Comanda #{Math.floor(Math.random() * 900 + 100)}</p>
+              {comandaNumber !== null && <p>Comanda #{comandaNumber}</p>}
             </div>
 
             <div className="ticket-items">
@@ -619,9 +582,18 @@ async function checkoutOnWhatsApp() {
             </div>
 
             <div className="ticket-footer">
+              {checkoutError && (
+                <p className="delivery-error" style={{ marginBottom: 8 }}>
+                  {checkoutError}
+                </p>
+              )}
               <div className="ticket-footer-row">
-                <button className="whatsapp-btn" onClick={checkoutOnWhatsApp} disabled={cart.length === 0}>
-                  Enviar pedido por WhatsApp
+                <button
+                  className="whatsapp-btn"
+                  onClick={checkoutOnWhatsApp}
+                  disabled={cart.length === 0 || saving}
+                >
+                  {saving ? "Guardando pedido..." : "Enviar pedido por WhatsApp"}
                 </button>
                 <div className="payment-note">
                   <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
@@ -785,20 +757,20 @@ async function checkoutOnWhatsApp() {
         <main className="menu">
           <div className="menu-grid">
             {visibleItems.map((item) => (
-             <div className="item-card" key={item.id}>
-  {item.image && (
-    <div className="item-image-container">
-      <img
-        src={item.image}
-        alt={item.name}
-        className="item-image"
-        loading="lazy"
-      />
-    </div>
-  )}
+              <div className="item-card" key={item.id}>
+                {item.image && (
+                  <div className="item-image-container">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="item-image"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
 
-  <h3>{item.name}</h3>
-  <p className="desc">{item.desc}</p>
+                <h3>{item.name}</h3>
+                <p className="desc">{item.desc}</p>
                 <div className="variant-row">
                   {item.variants.map((variant) => {
                     const isSelected = selectedVariant[item.id] === variant.id;
@@ -825,44 +797,45 @@ async function checkoutOnWhatsApp() {
                 {item.customizable && (
                   <div className="customize-box">
                     <p className="customize-label">Elegí tu pan (obligatorio)</p>
-        <div className="chip-row">
-  {BREADS.map((b) => {
-    const isOn = getItemCustomization(item.id).bread === b.id;
-    return (
-      <label key={b.id} className={`chip ${isOn ? "active" : ""}`}>
-        <input
-          type="radio"
-          name={`bread-${item.id}`}
-          checked={isOn}
-          onChange={() => chooseBread(item.id, b.id)}
-        />
-        {b.label}
-      </label>
-    );
-  })}
-</div>
-                    {item.ingredients && item.ingredients.length > 0 && (
-  <>
-    <p className="customize-label">Sacar ingredientes</p>
-    <div className="chip-row">
-      {item.ingredients.map((r) => (
-        <label
-          key={r.id}
-          className={`chip ${getItemCustomization(item.id).removals.includes(r.id) ? "active" : ""}`}
-        >
-          <input
-            type="checkbox"
-            checked={getItemCustomization(item.id).removals.includes(r.id)}
-            onChange={() => toggleRemoval(item.id, r.id)}
-          />
-          Sin {r.label}
-        </label>
-      ))}
-    </div>
-  </>
-)}
+                    <div className="chip-row">
+                      {BREADS.map((b) => {
+                        const isOn = getItemCustomization(item.id).bread === b.id;
+                        return (
+                          <label key={b.id} className={`chip ${isOn ? "active" : ""}`}>
+                            <input
+                              type="radio"
+                              name={`bread-${item.id}`}
+                              checked={isOn}
+                              onChange={() => chooseBread(item.id, b.id)}
+                            />
+                            {b.label}
+                          </label>
+                        );
+                      })}
+                    </div>
 
-  {item.extras && item.extras.length > 0 && (
+                    {item.ingredients && item.ingredients.length > 0 && (
+                      <>
+                        <p className="customize-label">Sacar ingredientes</p>
+                        <div className="chip-row">
+                          {item.ingredients.map((r) => (
+                            <label
+                              key={r.id}
+                              className={`chip ${getItemCustomization(item.id).removals.includes(r.id) ? "active" : ""}`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={getItemCustomization(item.id).removals.includes(r.id)}
+                                onChange={() => toggleRemoval(item.id, r.id)}
+                              />
+                              Sin {r.label}
+                            </label>
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {item.extras && item.extras.length > 0 && (
                       <>
                         <p className="customize-label">Extras</p>
                         <div className="chip-row">
@@ -887,14 +860,14 @@ async function checkoutOnWhatsApp() {
                 )}
 
                 <button
-  className="add-btn"
-  onClick={() => addToCart(item)}
-  disabled={item.customizable && !getItemCustomization(item.id).bread}
->
-  {item.customizable && !getItemCustomization(item.id).bread
-    ? "Elegí un pan para continuar"
-    : "Agregar al pedido"}
-</button>
+                  className="add-btn"
+                  onClick={() => addToCart(item)}
+                  disabled={item.customizable && !getItemCustomization(item.id).bread}
+                >
+                  {item.customizable && !getItemCustomization(item.id).bread
+                    ? "Elegí un pan para continuar"
+                    : "Agregar al pedido"}
+                </button>
               </div>
             ))}
           </div>
