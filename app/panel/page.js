@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
+import StoreStatusControl from "../../components/StoreStatusControl";
 
 /* =========================================================
    ACÁ PONÉS LA CONTRASEÑA DEL PANEL
@@ -183,7 +184,7 @@ export default function Panel() {
           </button>
         </div>
       </header>
-
+      <StoreStatusControl />
       <div className="panel-sales-bar">
         💰 Ventas de hoy: <strong>{sales.count}</strong> pedidos — <strong>{formatPrice(sales.total)}</strong>
       </div>

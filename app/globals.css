@@ -1604,3 +1604,114 @@ a {
 .item-card:hover .item-image {
   transform: scale(1.04);
 }
+/* ============================================
+   LOCAL CERRADO (cliente)
+   ============================================ */
+.closed-card {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  width: min(420px, 100%);
+  text-align: center;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.closed-title {
+  font-size: 24px;
+  margin: 0;
+}
+
+.closed-text {
+  margin: 0;
+  font-size: 15px;
+}
+
+.closed-schedule {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cheese);
+}
+
+/* ============================================
+   ABRIR / CERRAR LOCAL (panel)
+   ============================================ */
+.store-control {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.store-control-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.store-status {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.store-toggle-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  color: #fff;
+}
+
+.store-toggle-btn.close {
+  background: #c0392b;
+}
+
+.store-toggle-btn.open {
+  background: #2ecc71;
+  color: #06301a;
+}
+
+.store-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.store-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: #2a1f18;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.store-save-btn {
+  align-self: flex-start;
+  background: var(--cheese);
+  color: #2a1f18;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.store-feedback {
+  margin: 0;
+  font-size: 12px;
+}

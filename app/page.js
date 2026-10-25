@@ -4,6 +4,8 @@ import { useState, useMemo, useEffect, Suspense } from "react";
 import { supabase } from "../lib/supabaseClient";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useStoreStatus } from "../lib/useStoreStatus";
+import ClosedScreen from "../components/ClosedScreen";
 
 const DeliveryMap = dynamic(() => import("../components/DeliveryMap"), { ssr: false });
 /* =========================================================
@@ -46,12 +48,25 @@ const CATEGORIES = [
   },
 ];
 
+const REMOVALS = [
+  { id: "sin-lechuga", label: "Sin lechuga" },
+  { id: "sin-tomate", label: "Sin tomate" },
+  { id: "sin-cheddar", label: "Sin cheddar" },
+  { id: "sin-cebolla", label: "Sin cebolla" },
+];
+//
+const EXTRAS = [
+  { id: "extra-cheddar", label: "Extra cheddar", price: 1000 },
+  { id: "extra-bacon", label: "Extra bacon", price: 1500 },
+  { id: "extra-carne", label: "Extra carne", price: 2500 },
+  { id: "salsa-extra", label: "Salsa adicional", price: 500 },
+];
 const BREADS = [
   { id: "papa", label: "Pan de papa" },
   { id: "queso", label: "Pan de queso" },
   { id: "sesamo", label: "Pan de sésamo" },
 ];
-
+//
 const MENU = [
   {
     id: "cheese",
@@ -60,8 +75,12 @@ const MENU = [
     customizable: true,
     name: "Burger Cheese",
     desc: "Pan a eleccion, Medallon de Carne, Cheddar. Acompañada con papas fritas",
-    ingredients: [{ id: "cheddar", label: "Cheddar" }],
-    extras: [{ nombre: "medallon de carne", precio: 1900 }],
+    ingredients: [
+      { id: "cheddar", label: "Cheddar" },
+    ],
+    extras: [
+      { nombre: "medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 8000 },
       { id: "doble", label: "Doble", price: 9500 },
@@ -78,7 +97,9 @@ const MENU = [
       { id: "bacon", label: "Bacon" },
       { id: "cheddar", label: "Cheddar" },
     ],
-    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
+    extras: [
+      { nombre: "Medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 10500 },
       { id: "doble", label: "Doble", price: 12000 },
@@ -99,7 +120,9 @@ const MENU = [
       { id: "aros-cebolla", label: "Aros de cebolla" },
       { id: "salsa", label: "Salsa" },
     ],
-    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
+    extras: [
+      { nombre: "Medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 9000 },
       { id: "doble", label: "Doble", price: 10000 },
@@ -116,7 +139,9 @@ const MENU = [
       { id: "cebolla", label: "Cebolla laminada" },
       { id: "cheddar", label: "Cheddar" },
     ],
-    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
+    extras: [
+      { nombre: "Medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
@@ -135,7 +160,9 @@ const MENU = [
       { id: "pepinillos", label: "Pepinillos" },
       { id: "salsa", label: "Salsa" },
     ],
-    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
+    extras: [
+      { nombre: "Medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
@@ -153,7 +180,9 @@ const MENU = [
       { id: "salsa", label: "Salsa" },
       { id: "pepinillos", label: "Pepinillos" },
     ],
-    extras: [{ nombre: "Medallon de carne", precio: 1900 }],
+    extras: [
+      { nombre: "Medallon de carne", precio: 1900 },
+    ],
     variants: [
       { id: "simple", label: "Simple", price: 9500 },
       { id: "doble", label: "Doble", price: 10500 },
@@ -224,7 +253,7 @@ const MENU = [
 ];
 
 /* =========================================================
-   2) NÚMERO DE WHATSAPP
+   2) ACÁ PONÉS TU NÚMERO DE WHATSAPP
    Formato: código de país + código de área + número, sin
    espacios ni el "+". Ejemplo Argentina (La Plata):
    549221XXXXXXX
@@ -236,12 +265,22 @@ function formatPrice(n) {
 }
 
 export default function Home() {
+  const store = useStoreStatus();
   const [orderMode, setOrderMode] = useState(null); // "takeaway" | "delivery" | null
   const [viewingCategory, setViewingCategory] = useState(null); // id de categoría o null (portada)
-  // El carrito arranca vacío y se carga desde localStorage en un useEffect
-  // (evita errores de hidratación entre servidor y cliente).
-  const [cart, setCart] = useState([]);
-  const [cartLoaded, setCartLoaded] = useState(false);
+  const [cart, setCart] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("fb_cart");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
   const [cartOpen, setCartOpen] = useState(false);
   const [customization, setCustomization] = useState({});
   const [selectedVariant, setSelectedVariant] = useState(
@@ -254,31 +293,17 @@ export default function Home() {
   const [deliveryError, setDeliveryError] = useState("");
   const [deliveryZone, setDeliveryZone] = useState(null);
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const [lastOrderCode, setLastOrderCode] = useState(null);
-  const [comandaNumber, setComandaNumber] = useState(null);
-  const [checkoutError, setCheckoutError] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  // Cargar carrito y último pedido desde localStorage (solo en el cliente)
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("fb_cart");
-      if (saved) setCart(JSON.parse(saved));
-      setLastOrderCode(localStorage.getItem("fb_last_order_code") || null);
-    } catch {
-      // si el JSON está corrupto, arrancamos con el carrito vacío
+  const [lastOrderCode, setLastOrderCode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("fb_last_order_code") || null;
     }
-    setComandaNumber(Math.floor(Math.random() * 900 + 100));
-    setCartLoaded(true);
-  }, []);
+    return null;
+  });
 
-  // Persistir carrito en localStorage (recién después de haberlo cargado)
+  // Persistir carrito en localStorage
   useEffect(() => {
-    if (!cartLoaded) return;
-    try {
-      localStorage.setItem("fb_cart", JSON.stringify(cart));
-    } catch {}
-  }, [cart, cartLoaded]);
+    localStorage.setItem("fb_cart", JSON.stringify(cart));
+  }, [cart]);
 
   function goToCategory(categoryId) {
     setViewingCategory(categoryId);
@@ -457,66 +482,96 @@ export default function Home() {
   const currentCategory = CATEGORIES.find((c) => c.id === viewingCategory);
 
   async function checkoutOnWhatsApp() {
-    if (cart.length === 0 || saving) return;
+    if (cart.length === 0) return;
 
-    setCheckoutError("");
+    /* Revisamos que el local siga abierto justo antes de enviar */
+    const { data: storeNow } = await supabase
+      .from("settings")
+      .select("is_open")
+      .eq("id", "store")
+      .single();
+    if (storeNow && storeNow.is_open === false) {
+      alert("El local acaba de cerrar y no podemos tomar pedidos en este momento.");
+      window.location.reload();
+      return;
+    }
 
     if (orderMode === "delivery") {
       if (!deliveryStreet.trim()) {
         setDeliveryError("Por favor, ingresá la calle y número.");
-        setCheckoutError("Por favor, ingresá la calle y número.");
         return;
       }
       if (deliveryLat === null || deliveryLng === null) {
         setDeliveryError("Por favor, marcá la ubicación exacta en el mapa.");
-        setCheckoutError("Por favor, marcá la ubicación exacta en el mapa.");
         return;
       }
       if (!deliveryZone) {
-        const msg = "La ubicación seleccionada está fuera de la zona de entrega. Mové el pin a una zona cubierta.";
-        setDeliveryError(msg);
-        setCheckoutError(msg);
+        setDeliveryError("La ubicación seleccionada está fuera de la zona de entrega. Mové el pin a una zona cubierta.");
         return;
       }
     }
     setDeliveryError("");
 
     const orderCode = String(Math.floor(1000 + Math.random() * 9000));
-
-    const fullAddress =
-      orderMode === "delivery"
-        ? `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`
-        : null;
-
-    /* Guardamos el pedido en Supabase.
-       OJO: supabase.insert() NO lanza excepción cuando falla,
-       devuelve { error }. Por eso se revisa explícitamente. */
-    setSaving(true);
-    const { error } = await supabase.from("orders").insert({
-      mode: orderMode,
-      items: cart,
-      total: total,
-      subtotal: orderMode === "delivery" ? subtotal : null,
-      delivery_fee: orderMode === "delivery" ? deliveryFee : null,
-      delivery_zone: orderMode === "delivery" ? deliveryZone?.id : null,
-      code: orderCode,
-      delivery_address: fullAddress,
-      delivery_lat: orderMode === "delivery" ? deliveryLat : null,
-      delivery_lng: orderMode === "delivery" ? deliveryLng : null,
+    const lines = cart.map((line) => {
+      const notesPart = line.notes ? ` [${line.notes}]` : "";
+      return `• ${line.qty}x ${line.name} (${line.variantLabel})${notesPart} - ${formatPrice(line.price * line.qty)}`;
     });
-    setSaving(false);
 
-    if (error) {
-      console.error("Error guardando pedido:", error);
-      const msg = "No pudimos guardar el pedido: " + error.message;
-      setCheckoutError(msg);
-      if (orderMode === "delivery") setDeliveryError(msg);
-      return;
+    const modeLabel = orderMode === "delivery" ? "Envío / Delivery" : "Retiro en el local";
+
+    const messageParts = [
+      `¡Hola! Quiero hacer el pedido #${orderCode}:`,
+      "",
+      `Modalidad: ${modeLabel}`,
+      "",
+      ...lines,
+      "",
+    ];
+
+    if (orderMode === "delivery") {
+      messageParts.push(`Subtotal: ${formatPrice(subtotal)}`);
+      messageParts.push(`Envío (${deliveryZone.name}): ${formatPrice(deliveryFee)}`);
+      messageParts.push(`Total: ${formatPrice(total)}`);
+      messageParts.push("");
+      const fullAddress = `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`;
+      messageParts.push("Dirección:", fullAddress);
+      if (deliveryLat !== null && deliveryLng !== null) {
+        messageParts.push(`Ver en mapa: https://www.google.com/maps?q=${deliveryLat},${deliveryLng}`);
+      }
+    } else {
+      messageParts.push(`Total: ${formatPrice(total)}`);
+      messageParts.push("");
     }
 
+    messageParts.push("Nombre:");
+
+    const message = messageParts.filter(Boolean).join("\n");
+
+    /* Guardamos el pedido en Supabase. Si falla, igual dejamos
+       que el cliente pueda mandar el WhatsApp (no lo bloqueamos). */
     try {
+      const fullAddress =
+        orderMode === "delivery"
+          ? `${deliveryStreet.trim()}${deliveryDetails.trim() ? `\n${deliveryDetails.trim()}` : ""}`
+          : null;
+      await supabase.from("orders").insert({
+        mode: orderMode,
+        items: cart,
+        total: total,
+        subtotal: orderMode === "delivery" ? subtotal : null,
+        delivery_fee: orderMode === "delivery" ? deliveryFee : null,
+        delivery_zone: orderMode === "delivery" ? deliveryZone?.id : null,
+        code: orderCode,
+        delivery_address: fullAddress,
+        delivery_lat: orderMode === "delivery" ? deliveryLat : null,
+        delivery_lng: orderMode === "delivery" ? deliveryLng : null,
+      });
+      // Guardar código del último pedido para acceso rápido
       localStorage.setItem("fb_last_order_code", orderCode);
-    } catch {}
+    } catch (err) {
+      console.error("No se pudo guardar el pedido en la base:", err);
+    }
 
     window.location.href = `/pedido/${orderCode}`;
   }
@@ -536,7 +591,7 @@ export default function Home() {
                 ✕
               </button>
               <h2>Tu pedido</h2>
-              {comandaNumber !== null && <p>Comanda #{comandaNumber}</p>}
+              <p>Comanda #{Math.floor(Math.random() * 900 + 100)}</p>
             </div>
 
             <div className="ticket-items">
@@ -581,19 +636,11 @@ export default function Home() {
               </div>
             </div>
 
+
             <div className="ticket-footer">
-              {checkoutError && (
-                <p className="delivery-error" style={{ marginBottom: 8 }}>
-                  {checkoutError}
-                </p>
-              )}
               <div className="ticket-footer-row">
-                <button
-                  className="whatsapp-btn"
-                  onClick={checkoutOnWhatsApp}
-                  disabled={cart.length === 0 || saving}
-                >
-                  {saving ? "Guardando pedido..." : "Enviar pedido por WhatsApp"}
+                <button className="whatsapp-btn" onClick={checkoutOnWhatsApp} disabled={cart.length === 0}>
+                  Enviar pedido por WhatsApp
                 </button>
                 <div className="payment-note">
                   <strong>💳 Pago:</strong> Enviá el comprobante al alias <strong>oziel.a</strong> a nombre de <strong>Oziel Nicolás Acuña</strong>
@@ -612,6 +659,18 @@ export default function Home() {
       )}
     </>
   );
+
+  /* LOCAL CARGANDO / CERRADO */
+  if (store.loading) {
+    return (
+      <div className="mode-screen">
+        <p className="mode-subtitle">Cargando...</p>
+      </div>
+    );
+  }
+  if (!store.isOpen) {
+    return <ClosedScreen scheduleText={store.scheduleText} message={store.message} />;
+  }
 
   /* PANTALLA 1: elegir Take Away o Delivery */
   if (!orderMode) {
@@ -740,7 +799,16 @@ export default function Home() {
               {deliveryError && <p className="delivery-error">{deliveryError}</p>}
 
               <div className="delivery-map-container">
-                <Suspense fallback={<div className="delivery-map-container-inner"><div className="delivery-map-loading"><div className="map-spinner" /><p>Cargando mapa...</p></div></div>}>
+                <Suspense
+                  fallback={
+                    <div className="delivery-map-container-inner">
+                      <div className="delivery-map-loading">
+                        <div className="map-spinner" />
+                        <p>Cargando mapa...</p>
+                      </div>
+                    </div>
+                  }
+                >
                   <DeliveryMap
                     initialPosition={deliveryLat && deliveryLng ? { lat: deliveryLat, lng: deliveryLng } : null}
                     onPositionChange={handleMapPositionChange}
@@ -771,6 +839,7 @@ export default function Home() {
 
                 <h3>{item.name}</h3>
                 <p className="desc">{item.desc}</p>
+
                 <div className="variant-row">
                   {item.variants.map((variant) => {
                     const isSelected = selectedVariant[item.id] === variant.id;
